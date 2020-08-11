@@ -1,0 +1,32 @@
+.search__result-category-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 5px;
+  margin-top: 10px;
+  cursor: pointer;
+  transition: background-color .2s;
+  &:hover {
+    background-color: #e0e0e0;
+  }
+  &:last-child {
+    border-radius: 0 0 10px 10px; // todo из-за создания ангуляровской обёртки теперь не ясно, как подлезть к last-child/last-of-type
+  }
+
+  &-leftside {
+    display: flex;
+    align-items: center;
+    &-text {
+      display: flex;
+      flex-direction: column;
+      margin-left: 5px;
+      &-coordinates {
+        font-size: 12px;
+      }
+    }
+  }
+
+  &-rightside {
+    display: flex;
+    align-items: center;
+  }
+}

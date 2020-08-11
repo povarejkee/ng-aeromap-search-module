@@ -1,0 +1,17 @@
+<header class="search__header">
+  <mat-form-field class="search__header-field">
+    <mat-icon matPrefix>search</mat-icon>
+    <input matInput #inputSearch>
+    <div *ngIf = "isLoading" class="search__header-field-loader">
+      <mat-spinner [diameter] = "21"></mat-spinner>
+    </div>
+    <mat-icon
+      *ngIf = "inputSearch.value.trim() && !isLoading"
+      (click) = "clearSearchField(inputSearch)"
+      matSuffix
+      class="search__header-field-reset"
+    >
+      cancel
+    </mat-icon>
+  </mat-form-field>
+</header>

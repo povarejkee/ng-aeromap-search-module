@@ -1,0 +1,12 @@
+.search__result {
+  &-categories {
+    max-height: 300px;
+    overflow-y: auto;
+  }
+}
+
+.no-results {
+  position: absolute;
+  background-color: #fff;
+  padding: 5px;
+} // todo временно. Нужно продумать как стилизовать этот блочок

@@ -1,0 +1,29 @@
+.search__header {
+  &-field {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0 5px;
+    &-loader {
+      display: flex;
+      justify-content: center;
+      position: absolute;
+      top: 0;
+      right: 0;
+    }
+    &-reset {
+      cursor: pointer;
+    }
+  }
+}
+
+/* <Переопределения Material-стилей> */
+::ng-deep .mat-form-field-underline {
+  /* https://stackoverflow.com/questions/52057141/how-to-remove-underline-of-mat-select-component/52058379#:~:text=You%20can%20also%20use%20the,code%20will%20be%20like%20this. */
+  display: none;
+}
+
+.mat-form-field-appearance-legacy .mat-form-field-wrapper,
+.mat-form-field-wrapper {
+  padding-bottom: 0; // todo этот стиль применяется только если написан в styles.scss. WTF?!
+}
+/* </Переопределения Material-стилей> */

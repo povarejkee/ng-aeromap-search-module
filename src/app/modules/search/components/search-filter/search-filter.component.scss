@@ -1,0 +1,9 @@
+/* <Переопределения Material-стилей> */
+.mat-button-toggle-group {
+  box-shadow: none;
+}
+
+.mat-button-toggle-disabled:focus {
+  outline: none;
+}
+/* </Переопределения Material-стилей> */

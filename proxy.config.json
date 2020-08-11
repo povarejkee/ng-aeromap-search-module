@@ -1,0 +1,149 @@
+{
+  "/geoserver/wms": {
+    "target": "http://192.168.3.216:8080/",
+    "secure": true,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  },
+  "/geoserver/aero/wms": {
+    "target": "http://192.168.3.216:8080/",
+    "secure": true,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  },
+  "/geoserver/pdf": {
+    "target": "http://192.168.3.215:8080/",
+    "secure": true,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  },
+  "/geoserver/aero/ows": {
+    "target": "http://192.168.3.216:8080/",
+    "secure": true,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  },
+  "/geoserver/grib/wms": {
+    "target": "http://192.168.3.216:8080/",
+    "secure": true,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  },
+  "/geoserver/notam/ows": {
+    "target": "http://192.168.3.215:8080/",
+    "secure": true,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  },
+  "/geoserver/aixm/ows": {
+    "target": "http://192.168.3.215/geoserver/aixm/ows/",
+    "secure": true,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  },
+  "/geoserver/radar/ows": {
+    "target": "http://192.168.12.229:8080/geoserver/radar/ows/",
+    "secure": true,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  },
+  "/MapGetDataServlet/": {
+    "target": "http://192.168.3.215:8080/",
+    "secure": true,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  },
+  "/WeatherServlet/": {
+    "target": "http://192.168.3.215:8080/",
+    "secure": true,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  },
+  "/aixmviewer": {
+    "target": "http://192.168.3.216/",
+    "secure": true,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  },
+  "/api/aircraft/": {
+    "target": "http://192.168.3.216:8105/",
+    "secure": true,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  },
+  "/api/flight/": {
+    "target": "http://192.168.3.216:8106/",
+    "secure": true,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  },
+  "/api/fbo/": {
+    "target": "http://192.168.3.216:8107/",
+    "secure": true,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  },
+  "/api/Routes/getIntersections": {
+    "target": "http://192.168.3.215/",
+    "secure": true,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  },
+  "/api/Intersector/": {
+    "target": "http://192.168.3.217:8108/",
+    "secure": true,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  },
+  "/api/common/getHeightByRoute": {
+    "target": "http://192.168.3.217:8109/",
+    "secure": true,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  },
+  "/api/restriction": {
+    "target": "http://192.168.3.216:8110/",
+    "secure": true,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  },
+  "/api/elastic/": {
+    "target": "http://192.168.3.215/",
+    "secure": true,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  },
+  "/api/": {
+    "target": "http://192.168.3.216:8098/",
+    "secure": true,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  },
+  "/Bufr/": {
+    "target": "http://192.168.3.88:5080/",
+    "secure": true,
+    "changeOrigin": true,
+    "logLevel": "debug",
+    "pathRewrite": {
+      "^/Bufr/": "/api/Bufr/"
+    }
+  },
+  "/map/": {
+    "target": "http://192.168.3.215:8080/",
+    "secure": true,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  },
+  "/DataServlet": {
+    "target": "http://192.168.3.216:8099/",
+    "secure": true,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  },
+  "/images/": {
+    "target": "http://localhost:3000/",
+    "secure": true,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  }
+}
