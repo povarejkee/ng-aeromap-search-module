@@ -8,20 +8,20 @@ export class SearchState {
   private searchFilter$ = new BehaviorSubject<string>('all')
   private isLoading$ = new BehaviorSubject<boolean>(false)
 
-  getSearchFilter$(): Observable<string> {
-    return this.searchFilter$.asObservable()
-  }
-
-  setSearchFilter(filter: string): void {
-    this.searchFilter$.next(filter)
-  }
-
   getSearchItems$(): Observable<any> {
     return this.searchItems$.asObservable()
   }
 
   setSearchItems(items: any): void {
     this.searchItems$.next(items)
+  }
+
+  getSearchFilter$(): Observable<string> {
+    return this.searchFilter$.asObservable()
+  }
+
+  setSearchFilter(filter: string): void {
+    this.searchFilter$.next(filter)
   }
 
   getLoadingStatus$(): Observable<boolean> {

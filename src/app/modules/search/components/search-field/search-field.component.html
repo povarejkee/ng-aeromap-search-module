@@ -1,13 +1,17 @@
 <header class="search__header">
   <mat-form-field class="search__header-field">
     <mat-icon matPrefix>search</mat-icon>
-    <input matInput #inputSearch>
+    <input
+      matInput
+      #inputSearch
+      (keyup.enter) = "onEnterPressHandler($event)"
+    >
     <div *ngIf = "isLoading" class="search__header-field-loader">
       <mat-spinner [diameter] = "21"></mat-spinner>
     </div>
     <mat-icon
-      *ngIf = "inputSearch.value.trim() && !isLoading"
-      (click) = "clearSearchField(inputSearch)"
+      *ngIf = "inputSearch.value.trim()"
+      (click) = "clearSearchField(inputSearch.value)"
       matSuffix
       class="search__header-field-reset"
     >

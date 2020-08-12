@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ElementRef, Input, OnDestroy, ViewChild } from '@angular/core';
 import { fromEvent, Subscription } from "rxjs";
-import { debounceTime, distinctUntilChanged, filter, map, switchMap } from "rxjs/operators";
+import { debounceTime, distinctUntilChanged, filter, pluck, tap } from "rxjs/operators";
 
 import { SearchFacade } from "../../search-facade.service";
 
@@ -21,19 +21,28 @@ export class SearchFieldComponent implements AfterViewInit, OnDestroy {
     this.fromEventSub = fromEvent(this.inputRef.nativeElement, 'keyup')
       .pipe(
         debounceTime(1000),
-        map((event: any) => event.target.value),
+        pluck('target', 'value'),
+        tap((str: string) => str.length < 3 && this.searchFacade.stopRequest()), // todo перенести логику в фасад (убрать лишнее из core)
         filter((str: string) => str.length > 2),
         distinctUntilChanged(),
-        switchMap((str: string) => this.searchFacade.loadSearchItems(str) )
+        tap((str: string) => this.searchFacade.loadSearchItems(str))
       )
       .subscribe()
   }
 
   ngOnDestroy(): void {
-    if (this.fromEventSub) this.fromEventSub.unsubscribe()
+    if (this.fromEventSub) {
+      this.fromEventSub.unsubscribe()
+    }
   }
 
   clearSearchField(element: HTMLInputElement): void {
     this.searchFacade.clearSearchField(element)
+    this.searchFacade.stopRequest()
+  }
+
+
+  onEnterPressHandler(event: KeyboardEvent): void {
+    this.searchFacade.onEnterPressHandler(event)
   }
 }

@@ -1,5 +1,4 @@
 <section *ngIf = "items.summaryLength; else noResults" class="search__result">
-
   <app-search-filter></app-search-filter>
 
   <div class="search__result-categories" [ngSwitch] = "searchFilter">
@@ -37,61 +36,6 @@
       </app-search-category>
     </ng-container>
   </div>
-<!--
-  <div
-    *ngSwitchCase="'objects'"
-    class="search__result-category"
-  >
-    <span class="search__result-category-label">Объекты</span>
-    <app-search-item
-      *ngFor = "let item of items.objects; trackBy: trackByFn"
-      [item] = "item"
-    ></app-search-item>
-  </div>
-
-<div
-    *ngSwitchCase="'settlements'"
-    class="search__result-category"
-  >
-    <span class="search__result-category-label">Нас. пункты</span>
-    <app-search-item
-      *ngFor = "let item of items.settlements; trackBy: trackByFn"
-      [item] = "item"
-    ></app-search-item>
-  </div>
-
-  <div
-    *ngSwitchCase="'restrictedAreas'"
-    class="search__result-category"
-  >
-    <span class="search__result-category-label">Зоны</span>
-    <app-search-item
-      *ngFor = "let item of items.restrictedAreas; trackBy: trackByFn"
-      [item] = "item"
-    ></app-search-item>
-  </div>
-
-  <div
-    *ngSwitchCase="'highways'"
-    class="search__result-category"
-  >
-    <span class="search__result-category-label">Трассы</span>
-    <app-search-item
-      *ngFor = "let item of items.highways; trackBy: trackByFn"
-      [item] = "item"
-    ></app-search-item>
-  </div>
-
-  <div
-    *ngSwitchCase="'locations'"
-    class="search__result-category"
-  >
-    <span class="search__result-category-label">Локация</span>
-    <app-search-item
-      *ngFor = "let item of items.locations; trackBy: trackByFn"
-      [item] = "item"
-    ></app-search-item>
-  </div>-->
 </section>
 
 <ng-template #noResults>

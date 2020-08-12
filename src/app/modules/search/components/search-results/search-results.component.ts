@@ -8,8 +8,5 @@ import { Component, Input } from '@angular/core';
 export class SearchResultsComponent {
   @Input() items: any
   @Input() searchFilter: string
-
-  constructor() {
-    console.log(this.items)
-  }
 }
+

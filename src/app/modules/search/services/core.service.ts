@@ -1,6 +1,7 @@
 import { Injectable } from "@angular/core";
 
 import { ResultsModel } from "../models/Results.model";
+import {Subscription} from "rxjs";
 
 @Injectable()
 export class SearchCore {
@@ -13,6 +14,7 @@ export class SearchCore {
           case 'waypoint':
           case 'navaid':
           case 'procedure_point':
+          case 'aerodrome':
           case 'obstacle':
             results.objects.push(item)
             break
@@ -48,6 +50,10 @@ export class SearchCore {
   }
 
   clearSearchField(element: HTMLInputElement): void {
-    element.value = ''
+    element.value = '' // todo сделать эту логику в шаблоне
+  }
+
+  stopRequest(subscription: Subscription): void {
+    subscription.unsubscribe() // лишнее
   }
 }
