@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 
 import { Observable } from "rxjs";
 
+import { IResults } from "../../models/Results.interface";
+
 import { SearchFacade } from "../../search-facade.service";
 
 @Component({
@@ -10,7 +12,7 @@ import { SearchFacade } from "../../search-facade.service";
   styleUrls: ['./search-container.component.scss']
 })
 export class SearchContainerComponent implements OnInit {
-  public searchItems$: Observable<any>
+  public searchItems$: Observable<IResults>
   public isLoading$: Observable<boolean>
   public searchFilter$: Observable<string>
 

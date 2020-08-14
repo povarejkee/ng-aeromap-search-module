@@ -4,6 +4,7 @@
     <input
       matInput
       #inputSearch
+      [(ngModel)] = "value"
       (keyup.enter) = "onEnterPressHandler($event)"
     >
     <div *ngIf = "isLoading" class="search__header-field-loader">
@@ -11,7 +12,7 @@
     </div>
     <mat-icon
       *ngIf = "inputSearch.value.trim()"
-      (click) = "clearSearchField(inputSearch.value)"
+      (click) = "reset()"
       matSuffix
       class="search__header-field-reset"
     >

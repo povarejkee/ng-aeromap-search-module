@@ -1,6 +1,9 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 
-import { Subscription } from "rxjs";
+import { Subject } from "rxjs";
+import { takeUntil } from "rxjs/operators";
+
+import { IResults } from "../../models/Results.interface";
 
 import { SearchFacade } from "../../search-facade.service";
 
@@ -10,19 +13,21 @@ import { SearchFacade } from "../../search-facade.service";
   styleUrls: ['./search-filter.component.scss']
 })
 export class SearchFilterComponent implements OnInit, OnDestroy {
-  public searchItems: any
+  public searchItems: IResults
 
-  private getSearchItemsSub: Subscription
+  private unsubscribe$: Subject<any> = new Subject<any>()
 
   constructor(private searchFacade: SearchFacade) {}
 
   ngOnInit(): void {
-    this.getSearchItemsSub = this.searchFacade.getSearchItems$()
-      .subscribe((items: any) => this.searchItems = items)
+   this.searchFacade.getSearchItems$()
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((items: IResults) => this.searchItems = items)
   }
 
   ngOnDestroy(): void {
-    if (this.getSearchItemsSub) this.getSearchItemsSub.unsubscribe()
+    this.unsubscribe$.next()
+    this.unsubscribe$.complete()
   }
 
   setSearchFilter(eventEmitter): void {

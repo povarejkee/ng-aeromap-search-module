@@ -1,12 +1,15 @@
 import { Injectable } from "@angular/core";
 
+import { IResults } from "../models/Results.interface";
 import { ResultsModel } from "../models/Results.model";
-import {Subscription} from "rxjs";
+import { ICoordinatesRegExps } from "../models/CoordinatesRegExps.interface";
+import { CoordinatesRegExpsModel } from "../models/CoordinatesRegExps.model";
+import { ICoordinateChecks } from "../models/ICoordinateChecks.interface";
 
 @Injectable()
 export class SearchCore {
-  transformSearchItems(items: any): any {
-    const results: any = new ResultsModel()
+  transformSearchItems(items: any): IResults {
+    const results: IResults = new ResultsModel()
     results.summaryLength = items.length
 
       items.forEach((item: any) => {
@@ -49,11 +52,27 @@ export class SearchCore {
     return results
   }
 
-  clearSearchField(element: HTMLInputElement): void {
-    element.value = '' // todo сделать эту логику в шаблоне
-  }
+  getCoordinateChecks(str: string): ICoordinateChecks {
+    const coordinatesRegExps: ICoordinatesRegExps = new CoordinatesRegExpsModel(str)
+    const checks: ICoordinateChecks = {
+      coordinatePresents: false,
+      coordinateIsCorrect: false
+    }
 
-  stopRequest(subscription: Subscription): void {
-    subscription.unsubscribe() // лишнее
+    if (str.length > 2) {
+      checks.coordinatePresents = coordinatesRegExps.partialRegExps.some((exp: RegExp) => {
+        return exp.test(str)
+      })
+
+      if (checks.coordinatePresents) {
+        checks.coordinateIsCorrect = coordinatesRegExps.strictRegExps.some((exp: RegExp) => {
+          return exp.test(str)
+        })
+      }
+    }
+
+    console.log(coordinatesRegExps.strictRegExps, checks)
+
+    return checks
   }
 }

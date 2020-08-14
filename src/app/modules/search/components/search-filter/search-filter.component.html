@@ -3,7 +3,7 @@
   name="filters"
   (change) = "setSearchFilter($event)"
 >
-  <mat-button-toggle value="all" [disabled] = "!searchItems?.summaryLength">
+  <mat-button-toggle checked value="all" [disabled] = "!searchItems?.summaryLength">
     Все
     <span>{{ searchItems?.summaryLength || 0 }}</span>
   </mat-button-toggle>

@@ -2,17 +2,19 @@ import { Injectable } from "@angular/core";
 
 import { BehaviorSubject, Observable } from "rxjs";
 
+import { IResults } from "../models/Results.interface";
+
 @Injectable()
 export class SearchState {
-  private searchItems$ = new BehaviorSubject<any>(null)
-  private searchFilter$ = new BehaviorSubject<string>('all')
-  private isLoading$ = new BehaviorSubject<boolean>(false)
+  private searchItems$: BehaviorSubject<IResults> = new BehaviorSubject<IResults>(null)
+  private searchFilter$: BehaviorSubject<string> = new BehaviorSubject<string>('all')
+  private isLoading$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false)
 
-  getSearchItems$(): Observable<any> {
+  getSearchItems$(): Observable<IResults> {
     return this.searchItems$.asObservable()
   }
 
-  setSearchItems(items: any): void {
+  setSearchItems(items: IResults): void {
     this.searchItems$.next(items)
   }
 

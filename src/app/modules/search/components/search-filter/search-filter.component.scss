@@ -3,7 +3,10 @@
   box-shadow: none;
 }
 
-.mat-button-toggle-disabled:focus {
-  outline: none;
+.mat-button-toggle-disabled {
+  background-color: #fff;
+  &:focus {
+    outline: none;
+  }
 }
 /* </Переопределения Material-стилей> */

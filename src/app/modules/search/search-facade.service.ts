@@ -4,6 +4,8 @@ import { Observable, Subscription } from "rxjs";
 
 import { IMapAngularModule } from "./models/MapAngularModule.interface";
 import { ILocalization } from "./models/Localization.interface";
+import { IResults } from "./models/Results.interface";
+import { ICoordinateChecks } from "./models/ICoordinateChecks.interface";
 import { EN } from "./localization/en";
 import { RU } from "./localization/ru";
 
@@ -12,8 +14,8 @@ import { SearchState } from "./services/state.service";
 import { SearchCore } from "./services/core.service";
 
 @Injectable()
-export class SearchFacade implements IMapAngularModule{
-  public searchItemsAPISub: Subscription
+export class SearchFacade implements IMapAngularModule {
+  private searchItemsAPISub: Subscription
 
   constructor(
     private searchApi: SearchApi,
@@ -21,7 +23,7 @@ export class SearchFacade implements IMapAngularModule{
     private searchCore: SearchCore
   ) {}
 
-  getSearchItems$(): Observable<any> {
+  getSearchItems$(): Observable<IResults> {
     return this.searchState.getSearchItems$()
   }
 
@@ -34,10 +36,7 @@ export class SearchFacade implements IMapAngularModule{
   }
 
   loadSearchItems(str: string): void {
-    if (this.searchItemsAPISub) { // todo эта проверка должна быть внутри stopRequest()
-      this.searchItemsAPISub.unsubscribe()
-      this.searchItemsAPISub = undefined
-    }
+    this.stopRequest()
 
     this.searchState.setLoadingStatus(true)
 
@@ -57,18 +56,22 @@ export class SearchFacade implements IMapAngularModule{
       )
   }
 
-  clearSearchField(element: HTMLInputElement): void {
-    this.searchCore.clearSearchField(element)
-    this.searchState.setSearchItems(null)
-  }
-
   setSearchFilter(filter: string): void {
     this.searchState.setSearchFilter(filter)
   }
 
   stopRequest(): void {
     this.searchState.setLoadingStatus(false)
-    this.searchCore.stopRequest(this.searchItemsAPISub)
+
+    if (this.searchItemsAPISub) {
+      this.searchItemsAPISub.unsubscribe()
+      this.searchItemsAPISub = undefined
+    }
+  }
+
+  reset(): void {
+    this.stopRequest()
+    this.searchState.setSearchItems(null)
   }
 
   onEnterPressHandler(event: KeyboardEvent): void {
@@ -77,6 +80,10 @@ export class SearchFacade implements IMapAngularModule{
     if (value.length > 2) {
       this.loadSearchItems(value)
     }
+  }
+
+  getCoordinateChecks(str: string): ICoordinateChecks {
+    return this.searchCore.getCoordinateChecks(str)
   }
 
   GetTranslations(): ILocalization {
