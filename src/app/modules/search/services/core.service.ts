@@ -2,8 +2,8 @@ import { Injectable } from "@angular/core";
 
 import { IResults } from "../models/Results.interface";
 import { ResultsModel } from "../models/Results.model";
-import { ICoordinatesRegExps } from "../models/CoordinatesRegExps.interface";
-import { CoordinatesRegExpsModel } from "../models/CoordinatesRegExps.model";
+import { ICoordinates } from "../models/Coordinates.interface";
+import { CoordinatesModel } from "../models/Coordinates.model";
 import { ICoordinateChecks } from "../models/ICoordinateChecks.interface";
 
 @Injectable()
@@ -53,26 +53,10 @@ export class SearchCore {
   }
 
   getCoordinateChecks(str: string): ICoordinateChecks {
-    const coordinatesRegExps: ICoordinatesRegExps = new CoordinatesRegExpsModel(str)
-    const checks: ICoordinateChecks = {
-      coordinatePresents: false,
-      coordinateIsCorrect: false
-    }
+    const coordinatesRegExps: ICoordinates = new CoordinatesModel(str)
 
-    if (str.length > 2) {
-      checks.coordinatePresents = coordinatesRegExps.partialRegExps.some((exp: RegExp) => {
-        return exp.test(str)
-      })
+    coordinatesRegExps.setChecks()
 
-      if (checks.coordinatePresents) {
-        checks.coordinateIsCorrect = coordinatesRegExps.strictRegExps.some((exp: RegExp) => {
-          return exp.test(str)
-        })
-      }
-    }
-
-    console.log(coordinatesRegExps.strictRegExps, checks)
-
-    return checks
+    return coordinatesRegExps.checks
   }
 }
