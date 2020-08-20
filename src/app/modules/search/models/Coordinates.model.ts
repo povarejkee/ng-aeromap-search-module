@@ -11,7 +11,6 @@ export class CoordinatesModel implements ICoordinates {
     /[NSСЮEWЗВ]{1}[0-9]{1,3}[°]/, // N55°
     /[0-9]{1,3}[°][NSСЮEWЗВ]{1}/, // 55°N
     /[0-9]{1,3}[°]{0,1}[0-9]{1,2}[′][NSСЮEWЗВ]{1}/, // 55°45′N
-    ///[0-9]{1,6}[NSСЮ]{1}[0-9]{1,7}[EWЗВ]{1}/, // 45С55В
     /[0-9]{1,3}[,|.][0-9]{1,10}[°]{1}/, // 55,755831° или 55.755831°
     /[0-9]{1,3}[°]{0,1}[0-9]{1,2}[′]{1}[0-9]{1,2}[″]{1}[NSСЮEWЗВ]{1}/, // 55°45′20″N
     /[NSСЮEWЗВ]{1}[0-9]{1,3}[,|.][0-9]{1,10}[°]/, // N55,755831° или N55.755831°
@@ -62,9 +61,11 @@ export class CoordinatesModel implements ICoordinates {
               if (this.isInTheRightOrder(splittedStr)) {
 
                 // если верный порядок, то всё ли ОК с диапазонами?
-                // todo сделать проверку диапазонов
-                this.isTheRangesCorrect(splittedStr)
-
+                if (this.isTheRangesCorrect(splittedStr)) {
+                  // todo если всё ОК, нужно трансформировать координаты в десятичный формат и далее передавать их апихе карты
+                } else {
+                  console.error('Какая-то из частей координат невалидна!')
+                }
               } else {
                 console.error('Координаты должны быть переданы в правильном порядке!')
               }
@@ -176,6 +177,42 @@ export class CoordinatesModel implements ICoordinates {
     ) {
       return this.check3Type(odds, evens)
     }
+
+
+    if (
+      odds.every((part: string) => this.strictRegExps[4].test(part))
+      && evens.every((part: string) => this.strictRegExps[4].test(part))
+    ) {
+      return this.check4Type(odds, evens)
+    }
+
+    if (
+      odds.every((part: string) => this.strictRegExps[5].test(part))
+      && evens.every((part: string) => this.strictRegExps[5].test(part))
+    ) {
+      return this.check5Type(odds, evens)
+    }
+
+    if (
+      odds.every((part: string) => this.strictRegExps[6].test(part))
+      && evens.every((part: string) => this.strictRegExps[6].test(part))
+    ) {
+      return this.check6Type(odds, evens)
+    }
+
+    if (
+      odds.every((part: string) => this.strictRegExps[7].test(part))
+      && evens.every((part: string) => this.strictRegExps[7].test(part))
+    ) {
+      return this.check7Type(odds, evens)
+    }
+
+    if (
+      odds.every((part: string) => this.strictRegExps[8].test(part))
+      && evens.every((part: string) => this.strictRegExps[8].test(part))
+    ) {
+      return this.check8Type(odds, evens)
+    }
   }
 
   private check0Type(odds: string[], evens: string[]): boolean {
@@ -237,4 +274,92 @@ export class CoordinatesModel implements ICoordinates {
     console.log(oddsCorrect, evensCorrect, odds, evens)
     return oddsCorrect && evensCorrect
   }
+
+  private check4Type(odds: string[], evens: string[]): boolean {
+    const oddsCorrect: boolean = odds.every((part: string) => {
+      const [latitude, minutes] = part.match(/-{0,1}[0-9]{1,}/g) // 55°45′N 55°45′E 55°45′S 55°45′W
+      return latitude <= 89 && latitude >= -89 && minutes <= 59 && minutes >= 1
+    })
+
+    const evensCorrect: boolean = evens.every((part: string) => {
+      const [longitude, minutes] = part.match(/-{0,1}[0-9]{1,}/g)
+      return longitude <= 179 && longitude >= -179 && minutes <= 59 && minutes >= 1
+    })
+
+    console.log(oddsCorrect, evensCorrect, odds, evens)
+    return oddsCorrect && evensCorrect
+  }
+
+  private check5Type(odds: string[], evens: string[]): boolean {
+    const oddsCorrect: boolean = odds.every((part: string) => {
+      const [latitude, decimal] = part.match(/-{0,1}[0-9]{1,}/g) // 55,755831°
+      return latitude <= 89 && latitude >= -89 && decimal <= 999999 && decimal >= 1
+    })
+
+    const evensCorrect: boolean = evens.every((part: string) => {
+      const [longitude, decimal] = part.match(/-{0,1}[0-9]{1,}/g)
+      return longitude <= 179 && longitude >= -179 && decimal <= 999999 && decimal >= 1
+    })
+
+    console.log(oddsCorrect, evensCorrect, odds, evens)
+    return oddsCorrect && evensCorrect
+  }
+
+  private check6Type(odds: string[], evens: string[]): boolean {
+    const oddsCorrect: boolean = odds.every((part: string) => {
+      const [latitude, minutes, seconds] = part.match(/-{0,1}[0-9]{1,}/g) // 55°45′20″N
+      return latitude <= 89 && latitude >= -89
+        && minutes <= 59 && minutes >= 1
+        && seconds <= 59 && seconds >= 1
+    })
+
+    const evensCorrect: boolean = evens.every((part: string) => {
+      const [longitude, minutes, seconds] = part.match(/-{0,1}[0-9]{1,}/g)
+      return longitude <= 179 && longitude >= -179
+        && minutes <= 59 && minutes >= 1
+        && seconds <= 59 && seconds >= 1
+    })
+
+    console.log(oddsCorrect, evensCorrect, odds, evens)
+    return oddsCorrect && evensCorrect
+  }
+
+  private check7Type(odds: string[], evens: string[]): boolean {
+    const oddsCorrect: boolean = odds.every((part: string) => {
+      const [latitude, decimal] = part.match(/-{0,1}[0-9]{1,}/g) // N55,755831°
+      return latitude <= 89 && latitude >= -89 && decimal <= 999999 && decimal >= 1
+    })
+
+    const evensCorrect: boolean = evens.every((part: string) => {
+      const [longitude, decimal] = part.match(/-{0,1}[0-9]{1,}/g)
+      return longitude <= 179 && longitude >= -179 && decimal <= 999999 && decimal >= 1
+    })
+
+    console.log(oddsCorrect, evensCorrect, odds, evens)
+    return oddsCorrect && evensCorrect
+  }
+
+  private check8Type(odds: string[], evens: string[]): boolean {
+    const oddsCorrect: boolean = odds.every((part: string) => {
+      const [latitude, minutes, seconds, milliseconds] = part.match(/-{0,1}[0-9]{1,}/g) // 55°45′20,9916″N
+      return latitude <= 89 && latitude >= -89
+        && minutes <= 59 && minutes >= 1
+        && seconds <= 59 && seconds >= 1
+        && milliseconds <= 9999 && milliseconds >= 1
+    })
+
+    const evensCorrect: boolean = evens.every((part: string) => {
+      const [longitude, minutes, seconds, milliseconds] = part.match(/-{0,1}[0-9]{1,}/g)
+      return longitude <= 179 && longitude >= -179
+        && minutes <= 59 && minutes >= 1
+        && seconds <= 59 && seconds >= 1
+        && milliseconds <= 9999 && milliseconds >= 1
+    })
+
+    console.log(oddsCorrect, evensCorrect, odds, evens)
+    return oddsCorrect && evensCorrect
+  }
 }
+
+
+
