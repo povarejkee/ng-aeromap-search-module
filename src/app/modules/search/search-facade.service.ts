@@ -5,7 +5,7 @@ import { Observable, Subscription } from "rxjs";
 import { IMapAngularModule } from "./models/MapAngularModule.interface";
 import { ILocalization } from "./models/Localization.interface";
 import { IResults } from "./models/Results.interface";
-import { ICoordinateChecks } from "./models/ICoordinateChecks.interface";
+import { ICoordinateChecks } from "./models/CoordinateChecks.interface";
 import { EN } from "./localization/en";
 import { RU } from "./localization/ru";
 

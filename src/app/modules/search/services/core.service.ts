@@ -4,7 +4,7 @@ import { IResults } from "../models/Results.interface";
 import { ResultsModel } from "../models/Results.model";
 import { ICoordinates } from "../models/Coordinates.interface";
 import { CoordinatesModel } from "../models/Coordinates.model";
-import { ICoordinateChecks } from "../models/ICoordinateChecks.interface";
+import { ICoordinateChecks } from "../models/CoordinateChecks.interface";
 
 @Injectable()
 export class SearchCore {

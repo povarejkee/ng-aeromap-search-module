@@ -1,5 +1,5 @@
 import {ICoordinates} from "./Coordinates.interface";
-import {ICoordinateChecks} from "./ICoordinateChecks.interface";
+import {ICoordinateChecks} from "./CoordinateChecks.interface";
 
 export class CoordinatesModel implements ICoordinates {
   readonly str: string
@@ -63,9 +63,10 @@ export class CoordinatesModel implements ICoordinates {
 
                 // если верный порядок, то всё ли ОК с диапазонами?
                 // todo сделать проверку диапазонов
+                this.isTheRangesCorrect(splittedStr)
 
               } else {
-                console.log('Координаты должны быть переданы в правильном порядке!')
+                console.error('Координаты должны быть переданы в правильном порядке!')
               }
             } else {
               console.error('Координаты должны быть переданы в одинаковом формате!')
@@ -126,7 +127,7 @@ export class CoordinatesModel implements ICoordinates {
         console.log('Порядок заебись!')
         return true
       } else {
-        console.log('С порядком хуйня!')
+        console.error('С порядком хуйня!')
         return false
       }
     } else {
@@ -138,5 +139,102 @@ export class CoordinatesModel implements ICoordinates {
        * и каждой четной -- Запад (W || З)
        */
     }
+  }
+
+  private isTheRangesCorrect(parts: string[]): boolean {
+    const odds: string[] = []
+    const evens: string[] = []
+
+    parts.forEach((part: string, idx: number) => {
+      (idx + 1) % 2 === 0 ? evens.push(part) : odds.push(part)
+    })
+
+    if (
+      odds.every((part: string) => this.strictRegExps[0].test(part))
+      && evens.every((part: string) => this.strictRegExps[0].test(part))
+    ) {
+      return this.check0Type(odds, evens)
+    }
+
+    if (
+      odds.every((part: string) => this.strictRegExps[1].test(part))
+      && evens.every((part: string) => this.strictRegExps[1].test(part))
+    ) {
+      return this.check1Type(odds, evens)
+    }
+
+    if (
+      odds.every((part: string) => this.strictRegExps[2].test(part))
+      && evens.every((part: string) => this.strictRegExps[2].test(part))
+    ) {
+      return this.check2Type(odds, evens)
+    }
+
+    if (
+      odds.every((part: string) => this.strictRegExps[3].test(part))
+      && evens.every((part: string) => this.strictRegExps[3].test(part))
+    ) {
+      return this.check3Type(odds, evens)
+    }
+  }
+
+  private check0Type(odds: string[], evens: string[]): boolean {
+    const oddsCorrect: boolean = odds.every((part: string) => {
+      const latitude = Number(part.match(/-{0,1}[0-9]{0,}[^°]/)[0])
+      return latitude <= 90 && latitude >= -90
+    })
+
+    const evensCorrect: boolean = evens.every((part: string) => {
+      const longitude = Number(part.match(/-{0,1}[0-9]{0,}[^°]/)[0])
+      return longitude <= 180 && longitude >= -180
+    })
+
+    console.log(oddsCorrect, evensCorrect, odds, evens)
+    return oddsCorrect && evensCorrect
+  }
+
+  private check1Type(odds: string[], evens: string[]): boolean {
+    const oddsCorrect: boolean = odds.every((part: string) => {
+      const latitude = Number(part.match(/-{0,1}[0-9]{0,}[^NSСЮEWЗВ]/)[0])
+      return latitude <= 90 && latitude >= -90
+    })
+
+    const evensCorrect: boolean = evens.every((part: string) => {
+      const longitude = Number(part.match(/-{0,1}[0-9]{0,}[^NSСЮEWЗВ]/)[0])
+      return longitude <= 180 && longitude >= -180
+    })
+
+    console.log(oddsCorrect, evensCorrect, odds, evens)
+    return oddsCorrect && evensCorrect
+  }
+
+  private check2Type(odds: string[], evens: string[]): boolean {
+    const oddsCorrect: boolean = odds.every((part: string) => {
+      const latitude = Number(part.match(/[^NSСЮEWЗВ]-{0,1}[0-9]{0,}[^°]/)[0])
+      return latitude <= 90 && latitude >= -90
+    })
+
+    const evensCorrect: boolean = evens.every((part: string) => {
+      const longitude = Number(part.match(/[^NSСЮEWЗВ]-{0,1}[0-9]{0,}[^°]/)[0])
+      return longitude <= 180 && longitude >= -180
+    })
+
+    console.log(oddsCorrect, evensCorrect, odds, evens)
+    return oddsCorrect && evensCorrect
+  }
+
+  private check3Type(odds: string[], evens: string[]): boolean {
+    const oddsCorrect: boolean = odds.every((part: string) => {
+      const latitude = Number(part.match(/-{0,1}[0-9]{0,}[^°NSСЮEWЗВ]/)[0])
+      return latitude <= 90 && latitude >= -90
+    })
+
+    const evensCorrect: boolean = evens.every((part: string) => {
+      const longitude = Number(part.match(/-{0,1}[0-9]{0,}[^°NSСЮEWЗВ]/)[0])
+      return longitude <= 180 && longitude >= -180
+    })
+
+    console.log(oddsCorrect, evensCorrect, odds, evens)
+    return oddsCorrect && evensCorrect
   }
 }

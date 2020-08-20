@@ -1,4 +1,4 @@
-import { ICoordinateChecks } from "./ICoordinateChecks.interface";
+import { ICoordinateChecks } from "./CoordinateChecks.interface";
 
 export interface ICoordinates {
   str: string
