@@ -1,20 +1,21 @@
-import {ICoordinates} from "./Coordinates.interface";
-import {ICoordinateChecks} from "./CoordinateChecks.interface";
+import { ICoordinates } from "./Coordinates.interface";
+import { ICoordinateChecks } from "./CoordinateChecks.interface";
 
 export class CoordinatesModel implements ICoordinates {
   readonly str: string
 
+  public finalCoordinates: string[] = []
   public strictRegExps: RegExp[] = []
   public partialRegExps: RegExp[] = [
-    /[0-9]{1,3}[°]{1}/, // 55°
-    /[0-9]{1,7}[NSСЮEWЗВ]{1}/, // 45N
-    /[NSСЮEWЗВ]{1}[0-9]{1,3}[°]/, // N55°
-    /[0-9]{1,3}[°][NSСЮEWЗВ]{1}/, // 55°N
-    /[0-9]{1,3}[°]{0,1}[0-9]{1,2}[′][NSСЮEWЗВ]{1}/, // 55°45′N
-    /[0-9]{1,3}[,|.][0-9]{1,10}[°]{1}/, // 55,755831° или 55.755831°
-    /[0-9]{1,3}[°]{0,1}[0-9]{1,2}[′]{1}[0-9]{1,2}[″]{1}[NSСЮEWЗВ]{1}/, // 55°45′20″N
-    /[NSСЮEWЗВ]{1}[0-9]{1,3}[,|.][0-9]{1,10}[°]/, // N55,755831° или N55.755831°
-    /[0-9]{1,3}[°]{0,1}[0-9]{1,2}[′]{1}[0-9]{1,2}[,|.][0-9]{1,10}[″]{1}[NSСЮEWЗВ]{1}/, // 55°45′20,9916″N или 55°45′20.9916″N
+    /[0-9]{1,3}[°]{1}/, // [0] 55°
+    /[0-9]{1,7}[NSСЮEWЗВ]{1}/, // [1] 45N
+    /[NSСЮEWЗВ]{1}[0-9]{1,3}[°]/, // [2] N55°
+    /[0-9]{1,3}[°][NSСЮEWЗВ]{1}/, // [3] 55°N
+    /[0-9]{1,3}[°]{0,1}[0-9]{1,2}[′][NSСЮEWЗВ]{1}/, // [4] 55°45′N // todo требуется перевод в десятичную систему
+    /[0-9]{1,3}[,|.][0-9]{1,10}[°]{1}/, // [5] 55,755831° или 55.755831°
+    /[0-9]{1,3}[°]{0,1}[0-9]{1,2}[′]{1}[0-9]{1,2}[″]{1}[NSСЮEWЗВ]{1}/, // [6] 55°45′20″N // todo требуется перевод в десятичную систему
+    /[NSСЮEWЗВ]{1}[0-9]{1,3}[,|.][0-9]{1,10}[°]/, // [7] N55,755831° или N55.755831°
+    /[0-9]{1,3}[°]{0,1}[0-9]{1,2}[′]{1}[0-9]{1,2}[,|.][0-9]{1,10}[″]{1}[NSСЮEWЗВ]{1}/ // [8] 55°45′20,9916″N или 55°45′20.9916″N // todo требуется перевод в десятичную систему
   ]
   public checks: ICoordinateChecks = {
     coordinatePresents: false,
@@ -49,34 +50,23 @@ export class CoordinatesModel implements ICoordinates {
           splittedStr = this.str.split(' ,').map(item => item.trim())
         }
 
-        if (this.isEvenQuantityOfCoordinates(splittedStr)) {
-
-          // если четны, то валидны ли по строгим регуляркам?
-          if (this.isValidByRegExp(splittedStr)) {
-
-            // если валидны, то относятся ли к одному типу?
-            if (this.isSameTypeOfCoordinates()) {
-
-              // если относятся к одному типу, то верный ли порядок?
-              if (this.isInTheRightOrder(splittedStr)) {
-
-                // если верный порядок, то всё ли ОК с диапазонами?
-                if (this.isTheRangesCorrect(splittedStr)) {
-                  // todo если всё ОК, нужно трансформировать координаты в десятичный формат и далее передавать их апихе карты
-                } else {
-                  console.error('Какая-то из частей координат невалидна!')
-                }
-              } else {
-                console.error('Координаты должны быть переданы в правильном порядке!')
-              }
-            } else {
-              console.error('Координаты должны быть переданы в одинаковом формате!')
-            }
+        if (
+          this.isEvenQuantityOfCoordinates(splittedStr) && this.isValidByStrictRegExp(splittedStr)
+          && this.isSameTypeOfCoordinates() && this.isInTheRightOrder(splittedStr)
+          && this.isTheRangesCorrect(splittedStr)
+        ) {
+          if (this.isIncludeCardinalPoints(splittedStr)) {
+            this.finalCoordinates = splittedStr
           } else {
-            console.error('Координаты невалидны')
+            this.finalCoordinates = splittedStr.map((part: string, idx: number) => {
+              return (idx + 1) % 2 === 0 ? 'В' + part : 'C' + part
+            })
           }
+          console.log('before transform', this.finalCoordinates)
+          this.finalCoordinates = this.transformCoordinatesToDecimalFormat(this.finalCoordinates)
+          console.log('after transform', this.finalCoordinates)
         } else {
-          console.error('Число координат в строке должно быть четным')
+          console.error('Координаты невалидны!')
         }
       }
     }
@@ -86,7 +76,7 @@ export class CoordinatesModel implements ICoordinates {
     return parts.length % 2 === 0
   }
 
-  private isValidByRegExp(parts: string[]): boolean {
+  private isValidByStrictRegExp(parts: string[]): boolean {
     return parts.every((part: string) => {
       return this.strictRegExps.some((exp: RegExp, idx: number) => {
         const isValid = exp.test(part)
@@ -113,32 +103,24 @@ export class CoordinatesModel implements ICoordinates {
     const odds: string[] = []
     const evens: string[] = []
 
-    if (this.isIncludeCardinalPoints(parts)) {
-      parts.forEach((part: string, idx: number) => {
-        (idx + 1) % 2 === 0 ? evens.push(part) : odds.push(part)
-      })
+    parts.forEach((part: string, idx: number) => {
+      (idx + 1) % 2 === 0 ? evens.push(part) : odds.push(part)
+    })
 
+    if (this.isIncludeCardinalPoints(parts)) {
       const oddsIsOK
         = odds.every((part: string) => latitudeCardinalPointsRegExp.test(part))
       const evensIsOK
         = evens.every((part: string) => longitudeCardinalPointsForRegExp.test(part))
 
 
-      if (oddsIsOK && evensIsOK) { // todo не забыть сократить этот код (пока нужны логи)
-        console.log('Порядок заебись!')
-        return true
-      } else {
-        console.error('С порядком хуйня!')
-        return false
-      }
+      return oddsIsOK && evensIsOK
     } else {
-      console.log('Сторон свет нет, заебись!')
-      return true
-      /**
-       * todo нужно при трансформации это учесть
-       * и добавлять Север (N || С) каждой нечетной координате по умолчанию
-       * и каждой четной -- Запад (W || З)
-       */
+        return true
+        /**
+         * todo перед трансформацией добавлять 'Север' каждой нечетной координате
+         * и каждой четной -- 'Восток'
+         */
     }
   }
 
@@ -217,7 +199,7 @@ export class CoordinatesModel implements ICoordinates {
 
   private check0Type(odds: string[], evens: string[]): boolean {
     const oddsCorrect: boolean = odds.every((part: string) => {
-      const latitude = Number(part.match(/-{0,1}[0-9]{0,}[^°]/)[0])
+      const latitude = Number(part.match(/-{0,1}[0-9]{0,}[^°]/)[0]) // 55°
       return latitude <= 90 && latitude >= -90
     })
 
@@ -232,7 +214,7 @@ export class CoordinatesModel implements ICoordinates {
 
   private check1Type(odds: string[], evens: string[]): boolean {
     const oddsCorrect: boolean = odds.every((part: string) => {
-      const latitude = Number(part.match(/-{0,1}[0-9]{0,}[^NSСЮEWЗВ]/)[0])
+      const latitude = Number(part.match(/-{0,1}[0-9]{0,}[^NSСЮEWЗВ]/)[0]) // 45N
       return latitude <= 90 && latitude >= -90
     })
 
@@ -247,7 +229,7 @@ export class CoordinatesModel implements ICoordinates {
 
   private check2Type(odds: string[], evens: string[]): boolean {
     const oddsCorrect: boolean = odds.every((part: string) => {
-      const latitude = Number(part.match(/[^NSСЮEWЗВ]-{0,1}[0-9]{0,}[^°]/)[0])
+      const latitude = Number(part.match(/[^NSСЮEWЗВ]-{0,1}[0-9]{0,}[^°]/)[0]) // N55°
       return latitude <= 90 && latitude >= -90
     })
 
@@ -262,7 +244,7 @@ export class CoordinatesModel implements ICoordinates {
 
   private check3Type(odds: string[], evens: string[]): boolean {
     const oddsCorrect: boolean = odds.every((part: string) => {
-      const latitude = Number(part.match(/-{0,1}[0-9]{0,}[^°NSСЮEWЗВ]/)[0])
+      const latitude = Number(part.match(/-{0,1}[0-9]{0,}[^°NSСЮEWЗВ]/)[0]) // 55°N
       return latitude <= 90 && latitude >= -90
     })
 
@@ -278,12 +260,12 @@ export class CoordinatesModel implements ICoordinates {
   private check4Type(odds: string[], evens: string[]): boolean {
     const oddsCorrect: boolean = odds.every((part: string) => {
       const [latitude, minutes] = part.match(/-{0,1}[0-9]{1,}/g) // 55°45′N 55°45′E 55°45′S 55°45′W
-      return latitude <= 89 && latitude >= -89 && minutes <= 59 && minutes >= 1
+      return +latitude <= 89 && +latitude >= -89 && +minutes <= 59 && +minutes >= 1
     })
 
     const evensCorrect: boolean = evens.every((part: string) => {
       const [longitude, minutes] = part.match(/-{0,1}[0-9]{1,}/g)
-      return longitude <= 179 && longitude >= -179 && minutes <= 59 && minutes >= 1
+      return +longitude <= 179 && +longitude >= -179 && +minutes <= 59 && +minutes >= 1
     })
 
     console.log(oddsCorrect, evensCorrect, odds, evens)
@@ -293,12 +275,12 @@ export class CoordinatesModel implements ICoordinates {
   private check5Type(odds: string[], evens: string[]): boolean {
     const oddsCorrect: boolean = odds.every((part: string) => {
       const [latitude, decimal] = part.match(/-{0,1}[0-9]{1,}/g) // 55,755831°
-      return latitude <= 89 && latitude >= -89 && decimal <= 999999 && decimal >= 1
+      return +latitude <= 89 && +latitude >= -89 && +decimal <= 999999 && +decimal >= 1
     })
 
     const evensCorrect: boolean = evens.every((part: string) => {
       const [longitude, decimal] = part.match(/-{0,1}[0-9]{1,}/g)
-      return longitude <= 179 && longitude >= -179 && decimal <= 999999 && decimal >= 1
+      return +longitude <= 179 && +longitude >= -179 && +decimal <= 999999 && +decimal >= 1
     })
 
     console.log(oddsCorrect, evensCorrect, odds, evens)
@@ -308,16 +290,16 @@ export class CoordinatesModel implements ICoordinates {
   private check6Type(odds: string[], evens: string[]): boolean {
     const oddsCorrect: boolean = odds.every((part: string) => {
       const [latitude, minutes, seconds] = part.match(/-{0,1}[0-9]{1,}/g) // 55°45′20″N
-      return latitude <= 89 && latitude >= -89
-        && minutes <= 59 && minutes >= 1
-        && seconds <= 59 && seconds >= 1
+      return +latitude <= 89 && +latitude >= -89
+        && +minutes <= 59 && +minutes >= 1
+        && +seconds <= 59 && +seconds >= 1
     })
 
     const evensCorrect: boolean = evens.every((part: string) => {
       const [longitude, minutes, seconds] = part.match(/-{0,1}[0-9]{1,}/g)
-      return longitude <= 179 && longitude >= -179
-        && minutes <= 59 && minutes >= 1
-        && seconds <= 59 && seconds >= 1
+      return +longitude <= 179 && +longitude >= -179
+        && +minutes <= 59 && +minutes >= 1
+        && +seconds <= 59 && +seconds >= 1
     })
 
     console.log(oddsCorrect, evensCorrect, odds, evens)
@@ -327,12 +309,12 @@ export class CoordinatesModel implements ICoordinates {
   private check7Type(odds: string[], evens: string[]): boolean {
     const oddsCorrect: boolean = odds.every((part: string) => {
       const [latitude, decimal] = part.match(/-{0,1}[0-9]{1,}/g) // N55,755831°
-      return latitude <= 89 && latitude >= -89 && decimal <= 999999 && decimal >= 1
+      return +latitude <= 89 && +latitude >= -89 && +decimal <= 999999 && +decimal >= 1
     })
 
     const evensCorrect: boolean = evens.every((part: string) => {
       const [longitude, decimal] = part.match(/-{0,1}[0-9]{1,}/g)
-      return longitude <= 179 && longitude >= -179 && decimal <= 999999 && decimal >= 1
+      return +longitude <= 179 && +longitude >= -179 && +decimal <= 999999 && +decimal >= 1
     })
 
     console.log(oddsCorrect, evensCorrect, odds, evens)
@@ -342,22 +324,65 @@ export class CoordinatesModel implements ICoordinates {
   private check8Type(odds: string[], evens: string[]): boolean {
     const oddsCorrect: boolean = odds.every((part: string) => {
       const [latitude, minutes, seconds, milliseconds] = part.match(/-{0,1}[0-9]{1,}/g) // 55°45′20,9916″N
-      return latitude <= 89 && latitude >= -89
-        && minutes <= 59 && minutes >= 1
-        && seconds <= 59 && seconds >= 1
-        && milliseconds <= 9999 && milliseconds >= 1
+      return +latitude <= 89 && +latitude >= -89
+        && +minutes <= 59 && +minutes >= 1
+        && +seconds <= 59 && +seconds >= 1
+        && +milliseconds <= 9999 && +milliseconds >= 1
     })
 
     const evensCorrect: boolean = evens.every((part: string) => {
       const [longitude, minutes, seconds, milliseconds] = part.match(/-{0,1}[0-9]{1,}/g)
-      return longitude <= 179 && longitude >= -179
-        && minutes <= 59 && minutes >= 1
-        && seconds <= 59 && seconds >= 1
-        && milliseconds <= 9999 && milliseconds >= 1
+      return +longitude <= 179 && +longitude >= -179
+        && +minutes <= 59 && +minutes >= 1
+        && +seconds <= 59 && +seconds >= 1
+        && +milliseconds <= 9999 && +milliseconds >= 1
     })
 
     console.log(oddsCorrect, evensCorrect, odds, evens)
     return oddsCorrect && evensCorrect
+  }
+
+  private transformCoordinatesToDecimalFormat(coordinates: string[]): string[] {
+    const is4Type = coordinates.every((part: string) => this.strictRegExps[4].test(part))
+    const is6Type = coordinates.every((part: string) => this.strictRegExps[6].test(part))
+    const is8Type = coordinates.every((part: string) => this.strictRegExps[8].test(part))
+
+    const result: string[] = []
+
+    if (is4Type) {
+      coordinates.forEach((part: string) => {
+        const [degrees, minutes] = part.match(/-{0,1}[0-9]{1,}/g)
+        const transformedPart = Number(degrees) + Number(minutes) / 60
+
+        result.push(String(+transformedPart.toFixed(6)))
+      })
+
+      return result
+    }
+
+    if (is6Type) {
+      coordinates.forEach((part: string) => {
+        const [degrees, minutes, seconds] = part.match(/-{0,1}[0-9]{1,}/g)
+        const transformedPart = Number(degrees) + Number(minutes) / 60 + Number(seconds) / 3600
+
+        result.push(String(+transformedPart.toFixed(6)))
+      })
+
+      return result
+    }
+
+    if (is8Type) {
+      coordinates.forEach((part: string) => {
+        const [degrees, minutes, seconds, milliseconds] = part.match(/-{0,1}[0-9]{1,}/g)
+        const transformedPart = Number(degrees) + Number(minutes) / 60 + Number(seconds) / 3600 + Number(milliseconds) / 3600000
+
+        result.push(String(+transformedPart.toFixed(6)))
+      })
+
+      return result
+    }
+
+    return coordinates
   }
 }
 
