@@ -30,7 +30,7 @@ export class SearchFieldComponent implements AfterViewInit, OnDestroy {
         mergeMap((str: string) => {
           return iif(
             () => this.searchFacade.getCoordinateChecks(str).coordinatePresents,
-            of(str).pipe(tap(console.log)),
+            of(str).pipe(tap((console.log))),
             of(str).pipe(
               tap((str: string) => str.length < 3 && this.searchFacade.stopRequest()),
               filter((str: string) => str.length > 2),

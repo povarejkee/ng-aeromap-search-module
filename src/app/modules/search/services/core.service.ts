@@ -4,7 +4,6 @@ import { IResults } from "../models/Results.interface";
 import { ResultsModel } from "../models/Results.model";
 import { ICoordinates } from "../models/Coordinates.interface";
 import { CoordinatesModel } from "../models/Coordinates.model";
-import { ICoordinateChecks } from "../models/CoordinateChecks.interface";
 
 @Injectable()
 export class SearchCore {
@@ -52,11 +51,11 @@ export class SearchCore {
     return results
   }
 
-  getCoordinateChecks(str: string): ICoordinateChecks {
-    const coordinatesRegExps: ICoordinates = new CoordinatesModel(str)
+  getCoordinateChecks(str: string): boolean {
+    const coordinatesModel: ICoordinates = new CoordinatesModel(str)
 
-    coordinatesRegExps.setChecks()
+    coordinatesModel.setChecks()
 
-    return coordinatesRegExps.checks
+    return coordinatesModel.coordinatesPresents
   }
 }

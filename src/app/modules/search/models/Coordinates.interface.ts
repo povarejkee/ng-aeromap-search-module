@@ -1,9 +1,7 @@
-import { ICoordinateChecks } from "./CoordinateChecks.interface";
-
 export interface ICoordinates {
   str: string
   strictRegExps: RegExp[]
   partialRegExps: RegExp[]
-  checks: ICoordinateChecks
+  coordinatesPresents: boolean
   setChecks(): void
 }
