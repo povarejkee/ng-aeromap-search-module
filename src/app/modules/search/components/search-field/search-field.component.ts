@@ -28,9 +28,17 @@ export class SearchFieldComponent implements AfterViewInit, OnDestroy {
         debounceTime(1000),
         distinctUntilChanged(),
         mergeMap((str: string) => {
+          const coordinatesInfo = this.searchFacade.getCoordinatesInfo(str)
+
           return iif(
-            () => this.searchFacade.getCoordinateChecks(str).coordinatePresents,
-            of(str).pipe(tap((console.log))),
+            () => coordinatesInfo.coordinatesPresents,
+            of(str).pipe(
+              tap(() => {
+               if (coordinatesInfo.result.length !== 0) {
+                 console.log(coordinatesInfo.result)
+               }
+              })
+            ),
             of(str).pipe(
               tap((str: string) => str.length < 3 && this.searchFacade.stopRequest()),
               filter((str: string) => str.length > 2),

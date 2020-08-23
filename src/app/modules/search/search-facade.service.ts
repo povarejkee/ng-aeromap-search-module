@@ -5,7 +5,8 @@ import { Observable, Subscription } from "rxjs";
 import { IMapAngularModule } from "./models/MapAngularModule.interface";
 import { ILocalization } from "./models/Localization.interface";
 import { IResults } from "./models/Results.interface";
-import { ICoordinateChecks } from "./models/CoordinateChecks.interface";
+import { ICoordinates } from "./models/Coordinates.interface";
+
 import { EN } from "./localization/en";
 import { RU } from "./localization/ru";
 
@@ -82,8 +83,8 @@ export class SearchFacade implements IMapAngularModule {
     }
   }
 
-  getCoordinateChecks(str: string): ICoordinateChecks {
-    return this.searchCore.getCoordinateChecks(str)
+  getCoordinatesInfo(str: string): ICoordinates {
+    return this.searchCore.getCoordinatesInfo(str)
   }
 
   GetTranslations(): ILocalization {

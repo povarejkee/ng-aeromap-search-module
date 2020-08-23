@@ -6,16 +6,17 @@ export class CoordinatesModel implements ICoordinates {
   public finalCoordinates: number[][] = []
   public strictRegExps: RegExp[] = []
   public partialRegExps: RegExp[] = [
-    /-{0,1}[0-9]{1,3}[°]{1}/, // [0] 55°
-    /[0-9]{1,7}[NSСЮEWЗВ]{1}/, // [1] 45N
-    /[NSСЮEWЗВ]{1}[0-9]{1,3}[°]/, // [2] N55°
-    /[0-9]{1,3}[°][NSСЮEWЗВ]{1}/, // [3] 55°N
-    /[0-9]{1,3}[°]{0,1}[0-9]{1,2}[′][NSСЮEWЗВ]{1}/, // [4] 55°45′N
-    /-{0,1}[0-9]{1,3}[,|.][0-9]{1,10}[°]{1}/, // [5] 55,755831° или 55.755831°
-    /[0-9]{1,3}[°]{0,1}[0-9]{1,2}[′]{1}[0-9]{1,2}[″]{1}[NSСЮEWЗВ]{1}/, // [6] 55°45′20″N
-    /[NSСЮEWЗВ]{1}[0-9]{1,3}[,|.][0-9]{1,10}[°]/, // [7] N55,755831° или N55.755831°
-    /[0-9]{1,3}[°]{0,1}[0-9]{1,2}[′]{1}[0-9]{1,2}[,|.][0-9]{1,10}[″]{1}[NSСЮEWЗВ]{1}/ // [8] 55°45′20,9916″N или 55°45′20.9916″N
+    /-{0,1}[0-9]{1,3}[°]{1}/g, // [0] 55°
+    /[0-9]{1,7}[NSСЮEWЗВ]{1}/g, // [1] 45N
+    /[NSСЮEWЗВ]{1}[0-9]{1,3}[°]/g, // [2] N55°
+    /[0-9]{1,3}[°][NSСЮEWЗВ]{1}/g, // [3] 55°N
+    /[0-9]{1,3}[°]{0,1}[0-9]{1,2}[′][NSСЮEWЗВ]{1}/g, // [4] 55°45′N
+    /-{0,1}[0-9]{1,3}[,|.][0-9]{1,10}[°]{1}/g, // [5] 55,755831° или 55.755831°
+    /[0-9]{1,3}[°]{0,1}[0-9]{1,2}[′]{1}[0-9]{1,2}[″]{1}[NSСЮEWЗВ]{1}/g, // [6] 55°45′20″N
+    /[NSСЮEWЗВ]{1}[0-9]{1,3}[,|.][0-9]{1,10}[°]/g, // [7] N55,755831° или N55.755831°
+    /[0-9]{1,3}[°]{0,1}[0-9]{1,2}[′]{1}[0-9]{1,2}[,|.][0-9]{1,10}[″]{1}[NSСЮEWЗВ]{1}/g // [8] 55°45′20,9916″N или 55°45′20.9916″N
   ]
+
   public coordinatesPresents: boolean = false
 
   private activeType: number = null
@@ -37,15 +38,34 @@ export class CoordinatesModel implements ICoordinates {
         = this.partialRegExps.some((exp: RegExp) => exp.test(this.str))
 
       if (this.coordinatesPresents) {
-        let splittedStr = this.str.split(' ').map(item => item.trim()) // todo придётся пересмотреть подобные решения, тк надо сделать распознование с любым делиметром (или вовсе без делиметра)
+        const splittedStr = []
 
-        if (this.str.includes('/')) {
-          splittedStr = this.str.split('/').map(item => item.trim())
-        } else if (this.str.includes(', ')) {
-          splittedStr = this.str.split(', ').map(item => item.trim())
-        } else if (this.str.includes(' ,')) {
-          splittedStr = this.str.split(' ,').map(item => item.trim())
+        for (let i = 0; i < this.partialRegExps.length; i++) {
+          const matches = this.str.match(this.partialRegExps[i])
+          if (matches) {
+            splittedStr.push(...matches)
+          }
         }
+
+        const sortedByType: any = this.partialRegExps.reduce((
+          accumulator: any,
+          exp: RegExp,
+          idx: number
+        ) => {
+          const filteredByType: string[] = splittedStr.filter((part: string) => {
+            const _exp: RegExp = new RegExp(exp) // пиздец какой-то
+            return _exp.test(part)
+          })
+
+          if (filteredByType.length) {
+            accumulator[idx] = filteredByType
+          }
+
+          return accumulator
+        }, {})
+
+        console.log(splittedStr, sortedByType) // найти тот массив, в котором все элементы одинаковы
+        // и далее продолжить выполнение кода уже с этим массивом вместо splittedStr
 
         if (
           this.isEvenQuantityOfCoordinates(splittedStr)
@@ -426,6 +446,10 @@ export class CoordinatesModel implements ICoordinates {
     }
 
     return pairs
+  }
+
+  get result() {
+    return this.finalCoordinates
   }
 }
 

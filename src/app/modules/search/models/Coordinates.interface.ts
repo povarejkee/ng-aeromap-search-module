@@ -4,4 +4,5 @@ export interface ICoordinates {
   partialRegExps: RegExp[]
   coordinatesPresents: boolean
   setChecks(): void
+  result: number[][]
 }

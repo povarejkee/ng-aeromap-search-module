@@ -51,11 +51,10 @@ export class SearchCore {
     return results
   }
 
-  getCoordinateChecks(str: string): boolean {
+  getCoordinatesInfo(str: string): ICoordinates {
     const coordinatesModel: ICoordinates = new CoordinatesModel(str)
-
     coordinatesModel.setChecks()
 
-    return coordinatesModel.coordinatesPresents
+    return coordinatesModel
   }
 }
