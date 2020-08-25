@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 
 import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
@@ -10,7 +10,8 @@ import { SearchFacade } from "../../search-facade.service";
 @Component({
   selector: 'app-search-filter',
   templateUrl: './search-filter.component.html',
-  styleUrls: ['./search-filter.component.scss']
+  styleUrls: ['./search-filter.component.scss'],
+  encapsulation : ViewEncapsulation.None // понадобилось, чтобы перебить стили Material
 })
 export class SearchFilterComponent implements OnInit, OnDestroy {
   public searchItems: IResults

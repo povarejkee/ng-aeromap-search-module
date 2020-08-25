@@ -6,6 +6,7 @@ import { IMapAngularModule } from "./models/MapAngularModule.interface";
 import { ILocalization } from "./models/Localization.interface";
 import { IResults } from "./models/Results.interface";
 import { ICoordinates } from "./models/Coordinates.interface";
+import { IResponse } from "./models/Response.interface";
 
 import { EN } from "./localization/en";
 import { RU } from "./localization/ru";
@@ -43,8 +44,8 @@ export class SearchFacade implements IMapAngularModule {
 
     this.searchItemsAPISub = this.searchApi.getSearchItemsByStr(str)
       .subscribe(
-        (response: any) => {
-          const updatedSearchItems = this.searchCore.transformSearchItems(response.Data)
+        (response: IResponse) => {
+          const updatedSearchItems = this.searchCore.transformSearchItems(response)
           this.searchState.setSearchItems(updatedSearchItems)
         },
         (error: ErrorEvent) => {

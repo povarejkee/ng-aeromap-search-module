@@ -1,12 +1,31 @@
 /* <Переопределения Material-стилей> */
 .mat-button-toggle-group {
-  box-shadow: none;
+  box-shadow: none !important;
 }
 
-.mat-button-toggle-disabled {
-  background-color: #fff;
-  &:focus {
-    outline: none;
+.search__filters {
+  padding: 0 10px;
+  .mat-button-toggle-label-content {
+    line-height: 29px !important;
+    color: #333;
+    span {
+      color: rgba(0,0,0,.38)
+    }
+  }
+
+  .mat-button-toggle-checked {
+    border-radius: 10px;
+  }
+
+  .mat-button-toggle-disabled {
+    background-color: #fff;
+    &:focus {
+      outline: none;
+    }
+  }
+
+  .mat-ripple .mat-button-toggle-ripple {
+    border-radius: 10px;
   }
 }
 /* </Переопределения Material-стилей> */

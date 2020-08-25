@@ -8,9 +8,6 @@
   &:hover {
     background-color: #e0e0e0;
   }
-  &:last-child {
-    border-radius: 0 0 10px 10px; // todo из-за создания ангуляровской обёртки теперь не ясно, как подлезть к last-child/last-of-type
-  }
 
   &-leftside {
     display: flex;
@@ -18,7 +15,7 @@
     &-text {
       display: flex;
       flex-direction: column;
-      margin-left: 5px;
+      margin: 0 0 0 5px;
       &-coordinates {
         font-size: 12px;
       }
@@ -28,5 +25,8 @@
   &-rightside {
     display: flex;
     align-items: center;
+  }
+  &_last {
+    border-radius: 0 0 10px 10px;
   }
 }

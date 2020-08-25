@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, Input, OnDestroy, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Input, OnDestroy, ViewChild, ViewEncapsulation } from '@angular/core';
 
 import { fromEvent, iif, of, Subject } from "rxjs";
 import { debounceTime, distinctUntilChanged, filter, mergeMap, pluck, takeUntil, tap } from "rxjs/operators";
@@ -8,7 +8,8 @@ import { SearchFacade } from "../../search-facade.service";
 @Component({
   selector: 'app-search-field',
   templateUrl: './search-field.component.html',
-  styleUrls: ['./search-field.component.scss']
+  styleUrls: ['./search-field.component.scss'],
+  encapsulation : ViewEncapsulation.None // понадобилось, чтобы перебить стили Material
 })
 export class SearchFieldComponent implements AfterViewInit, OnDestroy {
   @Input() isLoading: boolean
@@ -35,7 +36,7 @@ export class SearchFieldComponent implements AfterViewInit, OnDestroy {
             of(str).pipe(
               tap(() => {
                if (coordinatesInfo.result.length !== 0) {
-                 console.log(coordinatesInfo.result)
+                 console.log('в апи карты', coordinatesInfo.result)
                }
               })
             ),

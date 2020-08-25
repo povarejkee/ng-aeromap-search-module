@@ -1,11 +1,19 @@
-<div class="search__result-category-item">
+<div
+  class="search__result-category-item"
+  [ngClass]="{
+    'search__result-category-item_last': true
+  }"
+>
+  <!-- todo придумать как получать индекс элемента -->
   <div class="search__result-category-item-leftside">
     <mat-icon matPrefix>add_location</mat-icon>
     <p class="search__result-category-item-leftside-text">
           <span class="search__result-category-item-leftside-text-title">
-            {{ item.name + ': ' + item.index + ', ' + item.sub }}
+            {{ item.name + ': ' + item.index + ', ' + item.id }}
           </span>
-      <span class="search__result-category-item-leftside-text-coordinates">N55 40, 284 W037 17, 452</span>
+      <span class="search__result-category-item-leftside-text-coordinates">
+        {{ item.lat && item.lon ? item.lat + ', ' + item.lon : 'Тут будет что-то, характерное для других типов' }}
+      </span>
     </p>
   </div>
   <div class="search__result-category-item-rightside">

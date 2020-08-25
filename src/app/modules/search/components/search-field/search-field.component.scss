@@ -7,7 +7,7 @@
       display: flex;
       justify-content: center;
       position: absolute;
-      top: 0;
+      top: 2px;
       right: 0;
     }
     &-reset {
@@ -17,13 +17,24 @@
 }
 
 /* <Переопределения Material-стилей> */
-::ng-deep .mat-form-field-underline {
-  /* https://stackoverflow.com/questions/52057141/how-to-remove-underline-of-mat-select-component/52058379#:~:text=You%20can%20also%20use%20the,code%20will%20be%20like%20this. */
+
+/* https://stackoverflow.com/questions/53684763/how-to-remove-space-bottom-mat-form-field */
+
+.search__header .mat-form-field-underline {
   display: none;
 }
 
-.mat-form-field-appearance-legacy .mat-form-field-wrapper,
-.mat-form-field-wrapper {
-  padding-bottom: 0; // todo этот стиль применяется только если написан в styles.scss. WTF?!
+.search__header .mat-form-field-appearance-legacy .mat-form-field-wrapper {
+  padding: 3px 0;
+}
+
+.search__header .mat-form-field-infix {
+  border-top: 0;
+}
+
+.search__header .mat-form-field-prefix,
+.search__header .mat-form-field-suffix {
+  position: relative;
+  top: 4px;
 }
 /* </Переопределения Material-стилей> */

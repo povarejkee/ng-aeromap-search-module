@@ -1,29 +1,30 @@
 <mat-button-toggle-group
+  class="search__filters"
   appearance="legacy"
   name="filters"
   (change) = "setSearchFilter($event)"
 >
-  <mat-button-toggle checked value="all" [disabled] = "!searchItems?.summaryLength">
+  <mat-button-toggle checked disableRipple value="all" [disabled] = "!searchItems?.summaryLength">
     Все
     <span>{{ searchItems?.summaryLength || 0 }}</span>
   </mat-button-toggle>
-  <mat-button-toggle value="objects" [disabled] = "!searchItems?.objects?.length">
+  <mat-button-toggle disableRipple value="objects" [disabled] = "!searchItems?.objects?.length">
     Объекты
     <span>{{ searchItems?.objects?.length || 0 }}</span>
   </mat-button-toggle>
-  <mat-button-toggle value="settlements" [disabled] = "!searchItems?.settlements?.length">
+  <mat-button-toggle disableRipple value="settlements" [disabled] = "!searchItems?.settlements?.length">
     Нас. пункты
     <span>{{ searchItems?.settlements?.length || 0 }}</span>
   </mat-button-toggle>
-  <mat-button-toggle value="restrictedAreas" [disabled] = "!searchItems?.restrictedAreas?.length">
+  <mat-button-toggle disableRipple value="restrictedAreas" [disabled] = "!searchItems?.restrictedAreas?.length">
     Зоны
     <span>{{ searchItems?.restrictedAreas?.length || 0 }}</span>
   </mat-button-toggle>
-  <mat-button-toggle value="highways" [disabled] = "!searchItems?.highways?.length">
+  <mat-button-toggle disableRipple value="highways" [disabled] = "!searchItems?.highways?.length">
     Трассы
     <span>{{ searchItems?.highways?.length || 0 }}</span>
   </mat-button-toggle>
-  <mat-button-toggle value="locations" [disabled] = "!searchItems?.locations?.length">
+  <mat-button-toggle disableRipple value="locations" [disabled] = "!searchItems?.locations?.length">
     Локация
     <span>{{ searchItems?.locations?.length || 0 }}</span>
   </mat-button-toggle>

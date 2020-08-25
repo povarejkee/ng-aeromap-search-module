@@ -1,22 +1,40 @@
-import { ICoordinates } from "./Coordinates.interface";
+import {ICoordinates} from "./Coordinates.interface";
 
 export class CoordinatesModel implements ICoordinates {
   readonly str: string
 
   public finalCoordinates: number[][] = []
-  public strictRegExps: RegExp[] = []
-  public partialRegExps: RegExp[] = [
-    /-{0,1}[0-9]{1,3}[°]{1}/g, // [0] 55°
-    /[0-9]{1,7}[NSСЮEWЗВ]{1}/g, // [1] 45N
-    /[NSСЮEWЗВ]{1}[0-9]{1,3}[°]/g, // [2] N55°
-    /[0-9]{1,3}[°][NSСЮEWЗВ]{1}/g, // [3] 55°N
-    /[0-9]{1,3}[°]{0,1}[0-9]{1,2}[′][NSСЮEWЗВ]{1}/g, // [4] 55°45′N
-    /-{0,1}[0-9]{1,3}[,|.][0-9]{1,10}[°]{1}/g, // [5] 55,755831° или 55.755831°
-    /[0-9]{1,3}[°]{0,1}[0-9]{1,2}[′]{1}[0-9]{1,2}[″]{1}[NSСЮEWЗВ]{1}/g, // [6] 55°45′20″N
-    /[NSСЮEWЗВ]{1}[0-9]{1,3}[,|.][0-9]{1,10}[°]/g, // [7] N55,755831° или N55.755831°
-    /[0-9]{1,3}[°]{0,1}[0-9]{1,2}[′]{1}[0-9]{1,2}[,|.][0-9]{1,10}[″]{1}[NSСЮEWЗВ]{1}/g // [8] 55°45′20,9916″N или 55°45′20.9916″N
+  public strictRegExps: RegExp[] = [
+    /^-{0,1}[0-9]{1,3}[°]{1}$/,
+    /^[0-9]{1,7}[NSСЮEWЗВ]{1}$/,
+    /^[NSСЮEWЗВ]{1}[0-9]{1,3}[°]$/,
+    /^[0-9]{1,3}[°][NSСЮEWЗВ]{1}$/,
+    /^[0-9]{1,3}[°]{0,1}[0-9]{1,2}[′][NSСЮEWЗВ]{1}$/,
+    /^-{0,1}[0-9]{1,3}[,|.][0-9]{1,10}[°]{1}$/,
+    /^[0-9]{1,3}[°]{0,1}[0-9]{1,2}[′]{1}[0-9]{1,2}[″]{1}[NSСЮEWЗВ]{1}$/,
+    /^[NSСЮEWЗВ]{1}[0-9]{1,3}[,|.][0-9]{1,10}[°]$/,
+    /^[0-9]{1,3}[°]{0,1}[0-9]{1,2}[′]{1}[0-9]{1,2}[,|.][0-9]{1,10}[″]{1}[NSСЮEWЗВ]{1}$/
   ]
-
+  public partialRegExps: RegExp[] = [
+    /-{0,1}[0-9]{1,3}[°]{1}/g,
+    // [0] 55° 55° 55° 55°
+    /[0-9]{1,7}[NSСЮEWЗВ]{1}/g,
+    // [1] 45N 45W 45N 45E
+    /[NSСЮEWЗВ]{1}[0-9]{1,3}[°]/g,
+    // [2] N55° E55° N55° W55°
+    /[0-9]{1,3}[°][NSСЮEWЗВ]{1}/g,
+    // [3] 55°N 55°W 55°N 55°E
+    /[0-9]{1,3}[°]{0,1}[0-9]{1,2}[′][NSСЮEWЗВ]{1}/g,
+    // [4] 55°45′N 55°45′W 55°45′N 55°45′E
+    /-{0,1}[0-9]{1,3}[,|.][0-9]{1,10}[°]{1}/g,
+    // [5] 55,755831° 55,755831° 55,755831° 55,755831°
+    /[0-9]{1,3}[°]{0,1}[0-9]{1,2}[′]{1}[0-9]{1,2}[″]{1}[NSСЮEWЗВ]{1}/g,
+    // [6] 55°45′20″N 55°45′20″W 55°45′20″N 55°45′20″E
+    /[NSСЮEWЗВ]{1}[0-9]{1,3}[,|.][0-9]{1,10}[°]/g,
+    // [7] N55,755831° W55,755831° N55,755831° E55,755831°
+    /[0-9]{1,3}[°]{0,1}[0-9]{1,2}[′]{1}[0-9]{1,2}[,|.][0-9]{1,10}[″]{1}[NSСЮEWЗВ]{1}/g
+    // [8] 55°45′20,9916″N 55°45′20,9916″W 55°45′20,9916″N 55°45′20,9916″E
+  ]
   public coordinatesPresents: boolean = false
 
   private activeType: number = null
@@ -25,11 +43,11 @@ export class CoordinatesModel implements ICoordinates {
   constructor(str: string) {
     this.str = str
 
-    for (let i = 0; i < this.partialRegExps.length; i++) {
+/*    for (let i = 0; i < this.partialRegExps.length; i++) {
       this.strictRegExps.push(
         new RegExp('^' + String(this.partialRegExps[i]).slice(1, -1) + '$')
       )
-    }
+    }*/
   }
 
   setChecks(): void {
@@ -38,45 +56,42 @@ export class CoordinatesModel implements ICoordinates {
         = this.partialRegExps.some((exp: RegExp) => exp.test(this.str))
 
       if (this.coordinatesPresents) {
-        const splittedStr = []
+        const allMatches: string[] = []
 
         for (let i = 0; i < this.partialRegExps.length; i++) {
           const matches = this.str.match(this.partialRegExps[i])
           if (matches) {
-            splittedStr.push(...matches)
+            allMatches.push(...matches)
           }
         }
 
-        const sortedByType: any = this.partialRegExps.reduce((
-          accumulator: any,
+        const sortedByType: string[][] = this.partialRegExps.reduce((
+          accumulator: string[][],
           exp: RegExp,
-          idx: number
         ) => {
-          const filteredByType: string[] = splittedStr.filter((part: string) => {
+          const filteredByType: string[] = allMatches.filter((part: string) => {
             const _exp: RegExp = new RegExp(exp) // пиздец какой-то
             return _exp.test(part)
           })
 
           if (filteredByType.length) {
-            accumulator[idx] = filteredByType
+            accumulator.push(filteredByType)
           }
 
           return accumulator
-        }, {})
+        }, [])
 
-        console.log(splittedStr, sortedByType) // найти тот массив, в котором все элементы одинаковы
-        // и далее продолжить выполнение кода уже с этим массивом вместо splittedStr
+        const correctGroup: string[] = this.getCorrectGroup(sortedByType)
+
+        console.log('все совпадения', allMatches)
+        console.log('сортировка по типам совпадений', sortedByType)
+        console.log('верная группа из сортированных типов', correctGroup)
 
         if (
-          this.isEvenQuantityOfCoordinates(splittedStr)
-          && this.isValidByStrictRegExp(splittedStr)
-          && this.isSameTypeOfCoordinates()
-          && this.isInTheRightOrder(splittedStr)
-          && this.isTheRangesCorrect(splittedStr)
+          this.isOnlyOneCorrectGroup(sortedByType) &&
+          this.isTheRangesCorrect(correctGroup)
         ) {
-          console.log('before transform', splittedStr)
-          this.finalCoordinates = this.transformCoordinatesToDecimalFormat(splittedStr)
-          console.log('after transform', this.finalCoordinates, this.activeType)
+          this.finalCoordinates = this.transformCoordinatesToDecimalFormat(correctGroup)
         } else {
           console.error('Координаты невалидны!')
         }
@@ -84,11 +99,33 @@ export class CoordinatesModel implements ICoordinates {
     }
   }
 
+  private getCorrectGroup(groups): string[] {
+    return groups.find(group =>
+      this.isEvenQuantityOfCoordinates(group)
+      && this.isValidByStrictRegExp(group)
+      && this.isInTheRightOrder(group)
+      && this.isSameTypeOfCoordinates()
+    )
+  }
+
+  private isOnlyOneCorrectGroup(groups): boolean {
+    const correctGroups = groups.filter((group: string[]) =>
+      this.isEvenQuantityOfCoordinates(group)
+      && this.isValidByStrictRegExp(group)
+      && this.isInTheRightOrder(group)
+      && this.isSameTypeOfCoordinates()
+    )
+
+    return correctGroups.length === 1
+  }
+
   private isEvenQuantityOfCoordinates(parts: string[]): boolean {
     return parts.length % 2 === 0
   }
 
+  // TODO переделать тк уже не нужно частично
   private isValidByStrictRegExp(parts: string[]): boolean {
+    this.calledRegExpsIndexes = []
     return parts.every((part: string) => {
       return this.strictRegExps.some((exp: RegExp, idx: number) => {
         const isValid = exp.test(part)
@@ -223,22 +260,102 @@ export class CoordinatesModel implements ICoordinates {
       return longitude <= 180 && longitude >= -180
     })
 
-    console.log(oddsCorrect, evensCorrect, odds, evens)
     return oddsCorrect && evensCorrect
   }
 
   private check1Type(odds: string[], evens: string[]): boolean {
     const oddsCorrect: boolean = odds.every((part: string) => {
-      const latitude = Number(part.match(/[0-9]{0,}[^NSСЮEWЗВ]/)[0]) // 45N
-      return latitude <= 90 && latitude >= -90
+      const values = part.match(/[0-9]{0,}[^NSСЮEWЗВ]/)[0].split('') // 45N
+
+      let latitude: number
+      let minutes: number
+      let seconds: number
+
+      if (values.length === 6) {
+        latitude = Number(values[0] + values[1])
+        minutes = Number(values[2] + values[3])
+        seconds = Number(values[4] + values[5])
+
+        return latitude <= 89 && latitude >= -89
+          && minutes <= 59 && minutes >= 1
+          && seconds <= 59 && seconds >= 1
+      }
+
+      if (values.length === 4) {
+        latitude = Number(values[0] + values[1])
+        minutes = Number(values[2] + values[3])
+
+        return latitude <= 89 && latitude >= -89
+          && minutes <= 59 && minutes >= 1
+      }
+
+      if (values.length === 2) {
+        latitude = Number(values[0] + values[1])
+
+        return latitude <= 89 && latitude >= -89
+      }
+
+      if (values.length === 1) {
+        latitude = Number(values[0])
+
+        return latitude <= 89 && latitude >= -89
+      }
     })
 
     const evensCorrect: boolean = evens.every((part: string) => {
-      const longitude = Number(part.match(/[0-9]{0,}[^NSСЮEWЗВ]/)[0])
-      return longitude <= 180 && longitude >= -180
+      const values: string[] = part.match(/[0-9]{0,}[^NSСЮEWЗВ]/)[0].split('') // 45N
+
+      let longitude: number
+      let minutes: number
+      let seconds: number
+
+      if (values.length === 7) {
+        longitude = Number(values[0] + values[1] + values[2])
+        minutes = Number(values[3] + values[4])
+        seconds = Number(values[5] + values[6])
+
+        return longitude <= 179 && longitude >= -179
+          && minutes <= 59 && minutes >= 1
+          && seconds <= 59 && seconds >= 1
+      }
+
+      if (values.length === 6) {
+        longitude = Number(values[0] + values[1])
+        minutes = Number(values[2] + values[3])
+        seconds = Number(values[4] + values[5])
+
+        return longitude <= 179 && longitude >= -179
+          && minutes <= 59 && minutes >= 1
+          && seconds <= 59 && seconds >= 1
+      }
+
+      if (values.length === 4) {
+        longitude = Number(values[0] + values[1])
+        minutes = Number(values[2] + values[3])
+
+        return longitude <= 179 && longitude >= -179
+          && minutes <= 59 && minutes >= 1
+      }
+
+      if (values.length === 3) {
+        longitude = Number(values[0] + values[1] + values[2])
+
+        return longitude <= 179 && longitude >= -179
+      }
+
+      if (values.length === 2) {
+        longitude = Number(values[0] + values[1])
+
+        return longitude <= 179 && longitude >= -179
+      }
+
+      if (values.length === 1) {
+        longitude = Number(values[0])
+
+        return longitude <= 179 && longitude >= -179
+      }
     })
 
-    console.log(oddsCorrect, evensCorrect, odds, evens)
     return oddsCorrect && evensCorrect
   }
 
@@ -253,7 +370,6 @@ export class CoordinatesModel implements ICoordinates {
       return longitude <= 180 && longitude >= -180
     })
 
-    console.log(oddsCorrect, evensCorrect, odds, evens)
     return oddsCorrect && evensCorrect
   }
 
@@ -268,7 +384,6 @@ export class CoordinatesModel implements ICoordinates {
       return longitude <= 180 && longitude >= -180
     })
 
-    console.log(oddsCorrect, evensCorrect, odds, evens)
     return oddsCorrect && evensCorrect
   }
 
@@ -283,7 +398,6 @@ export class CoordinatesModel implements ICoordinates {
       return +longitude <= 179 && +longitude >= -179 && +minutes <= 59 && +minutes >= 1
     })
 
-    console.log(oddsCorrect, evensCorrect, odds, evens)
     return oddsCorrect && evensCorrect
   }
 
@@ -298,7 +412,6 @@ export class CoordinatesModel implements ICoordinates {
       return +longitude <= 179 && +longitude >= -179 && +decimal <= 999999 && +decimal >= 1
     })
 
-    console.log(oddsCorrect, evensCorrect, odds, evens)
     return oddsCorrect && evensCorrect
   }
 
@@ -317,7 +430,6 @@ export class CoordinatesModel implements ICoordinates {
         && +seconds <= 59 && +seconds >= 1
     })
 
-    console.log(oddsCorrect, evensCorrect, odds, evens)
     return oddsCorrect && evensCorrect
   }
 
@@ -332,7 +444,6 @@ export class CoordinatesModel implements ICoordinates {
       return +longitude <= 179 && +longitude >= -179 && +decimal <= 999999 && +decimal >= 1
     })
 
-    console.log(oddsCorrect, evensCorrect, odds, evens)
     return oddsCorrect && evensCorrect
   }
 
@@ -353,7 +464,6 @@ export class CoordinatesModel implements ICoordinates {
         && +milliseconds <= 9999 && +milliseconds >= 1
     })
 
-    console.log(oddsCorrect, evensCorrect, odds, evens)
     return oddsCorrect && evensCorrect
   }
 
@@ -370,6 +480,54 @@ export class CoordinatesModel implements ICoordinates {
         break
 
       case 1:
+        coordinates.forEach((part: string) => {
+          const values: string[] = part.match(/[0-9]{1,}/)[0].split('')
+
+          let degrees: number
+          let minutes: number
+          let seconds: number
+          let transformedPart: number
+
+          switch (values.length) {
+            case 7:
+              degrees = Number(values[0] + values[1] + values[2])
+              minutes = Number(values[3] + values[4])
+              seconds = Number(values[5] + values[6])
+              transformedPart = Number(degrees) + Number(minutes) / 60 + Number(seconds) / 3600
+              break
+            case 6:
+              degrees = Number(values[0] + values[1])
+              minutes = Number(values[2] + values[3])
+              seconds = Number(values[4] + values[5])
+              transformedPart = Number(degrees) + Number(minutes) / 60 + Number(seconds) / 3600
+              break
+            case 4:
+              degrees = Number(values[0] + values[1])
+              minutes = Number(values[2] + values[3])
+              transformedPart = Number(degrees) + Number(minutes) / 60
+              break
+            case 3:
+              degrees = Number(values[0] + values[1] + values[2])
+              transformedPart = Number(degrees)
+              break
+            case 2:
+              degrees = Number(values[0] + values[1])
+              transformedPart = Number(degrees)
+              break
+            case 1:
+              degrees = Number(values[0])
+              transformedPart = Number(degrees)
+              break
+          }
+
+          if (/[SЮWЗ]/.test(part)) {
+            transformedPart = Number(`-${transformedPart}`)
+          }
+
+          subResult.push(+transformedPart.toFixed(6))
+        })
+        break
+
       case 2:
       case 3:
         coordinates.forEach((part: string) => {

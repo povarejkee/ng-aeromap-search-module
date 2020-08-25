@@ -50,3 +50,9 @@ import { JwtInterceptor } from "../../jwt.interceptor";
   ]
 })
 export class SearchModule {}
+
+// 1. в модуль запровайдить сервис-апи, в котором должен содержаться метод execute
+// который пишет в консоль то что передано (у Вадима есть пример)
+// 2. подключить ngx-translate service
+// 3. чекнуть апишку DONE
+// 4. верстка

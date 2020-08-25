@@ -4,49 +4,53 @@ import { IResults } from "../models/Results.interface";
 import { ResultsModel } from "../models/Results.model";
 import { ICoordinates } from "../models/Coordinates.interface";
 import { CoordinatesModel } from "../models/Coordinates.model";
+import { IResponse } from "../models/Response.interface";
 
 @Injectable()
 export class SearchCore {
-  transformSearchItems(items: any): IResults {
+  transformSearchItems(items: IResponse): IResults {
     const results: IResults = new ResultsModel()
-    results.summaryLength = items.length
 
-      items.forEach((item: any) => {
-        switch (item.type) {
-          case 'waypoint':
-          case 'navaid':
-          case 'procedure_point':
-          case 'aerodrome':
-          case 'obstacle':
-            results.objects.push(item)
-            break
+    console.log('результаты поиска', items)
 
-          case 'river':
-          case 'lake':
-          case 'city':
-          case 'notam':
-            results.settlements.push(item)
-            break
+    results.summaryLength = Object.keys(items).reduce((
+      accumulator: number,
+      key: string
+    ) => {
+      accumulator += items[key].length
+      return accumulator
+    }, 0)
 
-          case 'notam':
-          case 'fir_airspace':
-          case 'restricted_airspace':
-          case 'airspace':
-            results.restrictedAreas.push(item)
-            break
+    for (const key in items) {
+      const item = items[key]
+      switch (key) {
+        case 'aerodromSearchUnits':
+        case 'waypointSearchUnits':
+        case 'navaidSearchUnits':
+          results.objects.push(...item)
+          break
 
-          case 'procedure':
-          case 'route_segment':
-          case 'route':
-            results.highways.push(item)
-            break
+        case 'geoSearchUnits':
+          results.settlements.push(...item)
+          break
 
-          case 'real_track':
-          case 'plan_track':
-            results.locations.push(item)
-            break
-        }
-      })
+        case 'airspaceSearchUnits':
+          results.restrictedAreas.push(...item)
+          break
+
+        case 'RouteSearchUnit':
+          results.highways.push(...item)
+          break
+
+        // todo под locations у Володи пока пустота. Позже обработать еще один кейс
+      }
+    }
+
+    /* objects = aerodrom + navaid + waypoint
+      settlements = geoSearch
+      restrictedAreas = AirspaceSearchUnit
+      highways = RouteSearchUnit
+      locations = нету пока =( */
 
     return results
   }
