@@ -11,7 +11,7 @@ const MaterialModules = [
   MatIconModule,
   MatInputModule,
   MatButtonToggleModule,
-  MatProgressSpinnerModule,
+  MatProgressSpinnerModule
 ]
 
 @NgModule({

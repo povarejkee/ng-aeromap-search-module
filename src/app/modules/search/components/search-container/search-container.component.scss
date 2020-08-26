@@ -3,5 +3,6 @@
   margin: 1rem 0 0 1rem;
   background-color: #fff;
   border-radius: 10px;
-  min-width: 500px; // todo временно
+  min-width: 500px; // todo временно, пока не будет ясно что делать с адаптивом
+  position: relative;
 }

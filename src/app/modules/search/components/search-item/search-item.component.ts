@@ -7,4 +7,14 @@ import { Component, Input } from '@angular/core';
 })
 export class SearchItemComponent {
   @Input() item: any
+
+  /**
+   * Получение index и itemsLength нужно для того,
+   * чтобы узнать, какой из items последний. Это
+   * даст возможность задать уникальный стиль последнему
+   * элементу search-item, тк возникли сложности с селектором в css из-за обёртки,
+   * в которую Ангуляр заворачивает компонент search-item
+   * (нет возможности получить last-child). */
+  @Input() index: number
+  @Input() itemsLength: number
 }

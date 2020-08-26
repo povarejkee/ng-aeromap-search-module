@@ -1,4 +1,4 @@
-import {ICoordinates} from "./Coordinates.interface";
+import { ICoordinates } from "./Coordinates.interface";
 
 export class CoordinatesModel implements ICoordinates {
   readonly str: string
@@ -36,18 +36,13 @@ export class CoordinatesModel implements ICoordinates {
     // [8] 55°45′20,9916″N 55°45′20,9916″W 55°45′20,9916″N 55°45′20,9916″E
   ]
   public coordinatesPresents: boolean = false
+  public isValid: boolean = false
 
   private activeType: number = null
   private calledRegExpsIndexes: number[] = []
 
   constructor(str: string) {
     this.str = str
-
-/*    for (let i = 0; i < this.partialRegExps.length; i++) {
-      this.strictRegExps.push(
-        new RegExp('^' + String(this.partialRegExps[i]).slice(1, -1) + '$')
-      )
-    }*/
   }
 
   setChecks(): void {
@@ -83,17 +78,21 @@ export class CoordinatesModel implements ICoordinates {
 
         const correctGroup: string[] = this.getCorrectGroup(sortedByType)
 
-        console.log('все совпадения', allMatches)
-        console.log('сортировка по типам совпадений', sortedByType)
-        console.log('верная группа из сортированных типов', correctGroup)
+        console.group()
+          console.log('все совпадения', allMatches)
+          console.log('сортировка по типам совпадений', sortedByType)
+          console.log('верная группа из сортированных типов', correctGroup)
+        console.groupEnd()
 
         if (
           this.isOnlyOneCorrectGroup(sortedByType) &&
           this.isTheRangesCorrect(correctGroup)
         ) {
           this.finalCoordinates = this.transformCoordinatesToDecimalFormat(correctGroup)
+          this.isValid = true
         } else {
-          console.error('Координаты невалидны!')
+          console.error('Координаты невалидны! (Модель)')
+          this.isValid = false
         }
       }
     }
@@ -123,7 +122,7 @@ export class CoordinatesModel implements ICoordinates {
     return parts.length % 2 === 0
   }
 
-  // TODO переделать тк уже не нужно частично
+  // TODO переделать метод тк уже не нужно частично
   private isValidByStrictRegExp(parts: string[]): boolean {
     this.calledRegExpsIndexes = []
     return parts.every((part: string) => {

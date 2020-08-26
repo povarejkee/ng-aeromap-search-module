@@ -38,20 +38,13 @@ export class SearchCore {
           results.restrictedAreas.push(...item)
           break
 
-        case 'RouteSearchUnit':
+        case 'routeSearchUnit':
           results.highways.push(...item)
           break
 
         // todo под locations у Володи пока пустота. Позже обработать еще один кейс
       }
     }
-
-    /* objects = aerodrom + navaid + waypoint
-      settlements = geoSearch
-      restrictedAreas = AirspaceSearchUnit
-      highways = RouteSearchUnit
-      locations = нету пока =( */
-
     return results
   }
 

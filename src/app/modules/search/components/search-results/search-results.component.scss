@@ -1,15 +1,15 @@
 ::-webkit-scrollbar {
-  width: 0.5em !important;
-  height: 0.5em !important;
+  width: 0.5em;
+  height: 0.5em;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #e1e1e1 !important;
+  background: #e1e1e1;
   border-radius: 10px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #fff !important;
+  background: #fff;
   border-radius: 10px;
 }
 
@@ -25,4 +25,9 @@
   position: absolute;
   background-color: #fff;
   padding: 5px;
-} // todo временно. Нужно продумать как стилизовать этот блочок
+  border-radius: 10px;
+  bottom: -35px;
+  box-sizing: border-box;
+  width: 100%;
+  text-align: center;
+}

@@ -14,6 +14,7 @@ import { RU } from "./localization/ru";
 import { SearchApi } from "./services/api.service";
 import { SearchState } from "./services/state.service";
 import { SearchCore } from "./services/core.service";
+import { MapApi } from "../../../common/api.service";
 
 @Injectable()
 export class SearchFacade implements IMapAngularModule {
@@ -22,7 +23,8 @@ export class SearchFacade implements IMapAngularModule {
   constructor(
     private searchApi: SearchApi,
     private searchState: SearchState,
-    private searchCore: SearchCore
+    private searchCore: SearchCore,
+    private mapApi: MapApi
   ) {}
 
   getSearchItems$(): Observable<IResults> {
@@ -86,6 +88,48 @@ export class SearchFacade implements IMapAngularModule {
 
   getCoordinatesInfo(str: string): ICoordinates {
     return this.searchCore.getCoordinatesInfo(str)
+  }
+
+  sendCoordinatesToMapAPI(coordinates: number[][]): void {
+    // todo очищать карту перед каждым обновлением
+
+    if (coordinates.length === 1) {
+      this.mapApi.execute(
+        'DrawOnMapService',
+        'DrawGeomFunction',
+        {
+          point: { coordinates: coordinates[0] },
+          coordinatePoint: true,
+          showText: true
+        },
+        'baseVectorLayer'
+      )
+    } else {
+      if (
+        coordinates[0][0] === coordinates[coordinates.length - 1][0]
+        && coordinates[0][1] === coordinates[coordinates.length - 1][1]
+      ) {
+        this.mapApi.execute(
+          'DrawOnMapService',
+          'DrawGeomFunction',
+          {
+            polygon: { coordinates },
+            coordinatePoint: true
+          },
+          'baseVectorLayer'
+        )
+      } else {
+        this.mapApi.execute(
+          'DrawOnMapService',
+          'DrawGeomFunction',
+          {
+            arcLine: { coordinates },
+            coordinatePoint: true
+          },
+          'baseVectorLayer'
+        )
+      }
+    }
   }
 
   GetTranslations(): ILocalization {

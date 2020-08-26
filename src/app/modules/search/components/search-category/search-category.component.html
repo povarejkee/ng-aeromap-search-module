@@ -1,7 +1,9 @@
 <div class="search__result-category">
   <span class="search__result-category-label">{{ label }}</span>
   <app-search-item
-    *ngFor = "let item of items; trackBy: trackByFn"
+    *ngFor = "let item of items; index as i; trackBy: trackByFn"
     [item] = "item"
+    [index] = "i"
+    [itemsLength] = "items.length"
   ></app-search-item>
 </div>

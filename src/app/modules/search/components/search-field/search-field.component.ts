@@ -27,7 +27,6 @@ export class SearchFieldComponent implements AfterViewInit, OnDestroy {
         takeUntil(this.unsubscribe$),
         pluck('target', 'value'),
         debounceTime(1000),
-        distinctUntilChanged(),
         mergeMap((str: string) => {
           const coordinatesInfo = this.searchFacade.getCoordinatesInfo(str)
 
@@ -35,8 +34,15 @@ export class SearchFieldComponent implements AfterViewInit, OnDestroy {
             () => coordinatesInfo.coordinatesPresents,
             of(str).pipe(
               tap(() => {
-               if (coordinatesInfo.result.length !== 0) {
-                 console.log('в апи карты', coordinatesInfo.result)
+                this.searchFacade.reset()
+
+                if (!coordinatesInfo.isValid) {
+                  console.warn('Координаты невалидны! (Компонент)')
+                }
+
+                if (coordinatesInfo.result.length !== 0) {
+                  this.searchFacade.sendCoordinatesToMapAPI(coordinatesInfo.result)
+                  console.info('Координаты верны!', coordinatesInfo.result)
                }
               })
             ),
