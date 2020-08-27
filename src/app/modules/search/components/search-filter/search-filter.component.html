@@ -5,27 +5,27 @@
   (change) = "setSearchFilter($event)"
 >
   <mat-button-toggle checked disableRipple value="all" [disabled] = "!searchItems?.summaryLength">
-    Все
+    {{ 'Search.All' | translate }}
     <span>{{ searchItems?.summaryLength || 0 }}</span>
   </mat-button-toggle>
   <mat-button-toggle disableRipple value="objects" [disabled] = "!searchItems?.objects?.length">
-    Объекты
+    {{ 'Search.Objects' | translate }}
     <span>{{ searchItems?.objects?.length || 0 }}</span>
   </mat-button-toggle>
   <mat-button-toggle disableRipple value="settlements" [disabled] = "!searchItems?.settlements?.length">
-    Нас. пункты
+    {{ 'Search.Settlements' | translate }}
     <span>{{ searchItems?.settlements?.length || 0 }}</span>
   </mat-button-toggle>
   <mat-button-toggle disableRipple value="restrictedAreas" [disabled] = "!searchItems?.restrictedAreas?.length">
-    Зоны
+    {{ 'Search.RestrictedAreas' | translate }}
     <span>{{ searchItems?.restrictedAreas?.length || 0 }}</span>
   </mat-button-toggle>
   <mat-button-toggle disableRipple value="highways" [disabled] = "!searchItems?.highways?.length">
-    Трассы
+    {{ 'Search.Highways' | translate }}
     <span>{{ searchItems?.highways?.length || 0 }}</span>
   </mat-button-toggle>
   <mat-button-toggle disableRipple value="locations" [disabled] = "!searchItems?.locations?.length">
-    Локация
+    {{ 'Search.Locations' | translate }}
     <span>{{ searchItems?.locations?.length || 0 }}</span>
   </mat-button-toggle>
 </mat-button-toggle-group>

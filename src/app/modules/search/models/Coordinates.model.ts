@@ -45,6 +45,30 @@ export class CoordinatesModel implements ICoordinates {
     this.str = str
   }
 
+  checkForTrashOnLeftSide(correctArr): boolean {
+    if (correctArr) {
+      const [ first ] = correctArr
+      const isEmptyOnLeft: number = this.str.trim().indexOf(first)
+
+      return isEmptyOnLeft === 0
+    }
+  }
+
+  checkForTrashOnRightSide(correctArr): boolean {
+    if (correctArr) {
+      const last: string = correctArr[correctArr.length - 1]
+      const pureStr: string = this.str.trim()
+      const endOfStr: string[] = []
+
+      for (let i = 1; i <= last.length; i++) {
+        endOfStr.push(pureStr[pureStr.length - i])
+      }
+
+      return last === endOfStr.reverse().join('')
+    }
+  }
+
+
   setChecks(): void {
     if (this.str.length > 2) {
       this.coordinatesPresents
@@ -79,14 +103,18 @@ export class CoordinatesModel implements ICoordinates {
         const correctGroup: string[] = this.getCorrectGroup(sortedByType)
 
         console.group()
-          console.log('все совпадения', allMatches)
-          console.log('сортировка по типам совпадений', sortedByType)
-          console.log('верная группа из сортированных типов', correctGroup)
+          console.log('Все совпадения', allMatches)
+          console.log('Сортировка по типам совпадений', sortedByType)
+          console.log('Верная группа из сортированных типов', correctGroup)
+          console.log('Начало строки', this.checkForTrashOnLeftSide(correctGroup))
+          console.log('Конец строки', this.checkForTrashOnRightSide(correctGroup))
         console.groupEnd()
 
         if (
-          this.isOnlyOneCorrectGroup(sortedByType) &&
-          this.isTheRangesCorrect(correctGroup)
+          this.isOnlyOneCorrectGroup(sortedByType)
+          && this.checkForTrashOnLeftSide(correctGroup)
+          && this.checkForTrashOnRightSide(correctGroup)
+          && this.isTheRangesCorrect(correctGroup)
         ) {
           this.finalCoordinates = this.transformCoordinatesToDecimalFormat(correctGroup)
           this.isValid = true

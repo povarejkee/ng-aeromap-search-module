@@ -4,6 +4,7 @@ import { fromEvent, iif, of, Subject } from "rxjs";
 import { debounceTime, distinctUntilChanged, filter, mergeMap, pluck, takeUntil, tap } from "rxjs/operators";
 
 import { SearchFacade } from "../../search-facade.service";
+import {ICoordinates} from "../../models/Coordinates.interface";
 
 @Component({
   selector: 'app-search-field',
@@ -17,6 +18,7 @@ export class SearchFieldComponent implements AfterViewInit, OnDestroy {
 
   public value: string = ''
 
+  private coordinatesInfo: ICoordinates
   private unsubscribe$: Subject<any> = new Subject<any>()
 
   constructor(private searchFacade: SearchFacade) {}
@@ -26,23 +28,23 @@ export class SearchFieldComponent implements AfterViewInit, OnDestroy {
       .pipe(
         takeUntil(this.unsubscribe$),
         pluck('target', 'value'),
-        debounceTime(1000),
+        debounceTime(1500),
         mergeMap((str: string) => {
-          const coordinatesInfo = this.searchFacade.getCoordinatesInfo(str)
+          this.coordinatesInfo = this.searchFacade.getCoordinatesInfo(str)
 
           return iif(
-            () => coordinatesInfo.coordinatesPresents,
+            () => this.coordinatesInfo.coordinatesPresents,
             of(str).pipe(
               tap(() => {
                 this.searchFacade.reset()
 
-                if (!coordinatesInfo.isValid) {
+                if (!this.coordinatesInfo.isValid) {
                   console.warn('Координаты невалидны! (Компонент)')
                 }
 
-                if (coordinatesInfo.result.length !== 0) {
-                  this.searchFacade.sendCoordinatesToMapAPI(coordinatesInfo.result)
-                  console.info('Координаты верны!', coordinatesInfo.result)
+                if (this.coordinatesInfo.result.length !== 0) {
+                  this.searchFacade.sendCoordinatesToMapAPI(this.coordinatesInfo.result)
+                  console.info('Координаты верны!', this.coordinatesInfo.result)
                }
               })
             ),
@@ -68,6 +70,8 @@ export class SearchFieldComponent implements AfterViewInit, OnDestroy {
   }
 
   onEnterPressHandler(event: KeyboardEvent): void {
-    this.searchFacade.onEnterPressHandler(event)
+    if (!this.coordinatesInfo?.coordinatesPresents) {
+      this.searchFacade.onEnterPressHandler(event)
+    }
   }
 }
