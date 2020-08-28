@@ -18,7 +18,7 @@ export class SearchFieldComponent implements AfterViewInit, OnDestroy {
 
   public value: string = ''
 
-  private coordinatesInfo: ICoordinates
+  private coordinatesModel: ICoordinates
   private unsubscribe$: Subject<any> = new Subject<any>()
 
   constructor(private searchFacade: SearchFacade) {}
@@ -30,23 +30,13 @@ export class SearchFieldComponent implements AfterViewInit, OnDestroy {
         pluck('target', 'value'),
         debounceTime(1500),
         mergeMap((str: string) => {
-          this.coordinatesInfo = this.searchFacade.getCoordinatesInfo(str)
+          this.coordinatesModel = this.searchFacade.getCoordinatesModel(str)
+          this.coordinatesModel.setChecks()
 
           return iif(
-            () => this.coordinatesInfo.coordinatesPresents,
+            () => this.coordinatesModel.coordinatesPresents,
             of(str).pipe(
-              tap(() => {
-                this.searchFacade.reset()
-
-                if (!this.coordinatesInfo.isValid) {
-                  console.warn('Координаты невалидны! (Компонент)')
-                }
-
-                if (this.coordinatesInfo.result.length !== 0) {
-                  this.searchFacade.sendCoordinatesToMapAPI(this.coordinatesInfo.result)
-                  console.info('Координаты верны!', this.coordinatesInfo.result)
-               }
-              })
+              tap(() => this.searchFacade.sendCoordinates(this.coordinatesModel))
             ),
             of(str).pipe(
               tap((str: string) => str.length < 3 && this.searchFacade.stopRequest()),
@@ -70,7 +60,7 @@ export class SearchFieldComponent implements AfterViewInit, OnDestroy {
   }
 
   onEnterPressHandler(event: KeyboardEvent): void {
-    if (!this.coordinatesInfo?.coordinatesPresents) {
+    if (!this.coordinatesModel?.coordinatesPresents) {
       this.searchFacade.onEnterPressHandler(event)
     }
   }

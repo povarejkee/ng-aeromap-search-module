@@ -2,7 +2,7 @@ export const RU = {
   Search: {
     All: 'Все',
     Objects: 'Объекты',
-    Settlements: 'Населенные пункты',
+    Settlements: 'Нас. пункты',
     RestrictedAreas: 'Зоны',
     Highways: 'Трассы',
     Locations: 'Локации',

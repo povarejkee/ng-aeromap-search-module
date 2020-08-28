@@ -1,11 +1,13 @@
+@import '../../variables.scss';
+
 .search__result-category {
-  border-top: 1px solid #e0e0e0;
-  margin-top: 15px;
+  border-top: 1px solid $secondary-color;
+  margin-top: 10px;
   position: relative;
 
   &-label {
-    background-color: #fff;
-    color: #00000061;
+    background-color: $primary-color;
+    color: $secondary-dark-color;
     padding: 0 10px;
     position: absolute;
     top: -10px;

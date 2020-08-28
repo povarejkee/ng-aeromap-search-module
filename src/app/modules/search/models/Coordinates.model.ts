@@ -45,31 +45,7 @@ export class CoordinatesModel implements ICoordinates {
     this.str = str
   }
 
-  checkForTrashOnLeftSide(correctArr): boolean {
-    if (correctArr) {
-      const [ first ] = correctArr
-      const isEmptyOnLeft: number = this.str.trim().indexOf(first)
-
-      return isEmptyOnLeft === 0
-    }
-  }
-
-  checkForTrashOnRightSide(correctArr): boolean {
-    if (correctArr) {
-      const last: string = correctArr[correctArr.length - 1]
-      const pureStr: string = this.str.trim()
-      const endOfStr: string[] = []
-
-      for (let i = 1; i <= last.length; i++) {
-        endOfStr.push(pureStr[pureStr.length - i])
-      }
-
-      return last === endOfStr.reverse().join('')
-    }
-  }
-
-
-  setChecks(): void {
+  public setChecks(): void {
     if (this.str.length > 2) {
       this.coordinatesPresents
         = this.partialRegExps.some((exp: RegExp) => exp.test(this.str))
@@ -106,59 +82,86 @@ export class CoordinatesModel implements ICoordinates {
           console.log('Все совпадения', allMatches)
           console.log('Сортировка по типам совпадений', sortedByType)
           console.log('Верная группа из сортированных типов', correctGroup)
-          console.log('Начало строки', this.checkForTrashOnLeftSide(correctGroup))
-          console.log('Конец строки', this.checkForTrashOnRightSide(correctGroup))
+        /** todo
+         * После того, как удалю эти логи -- удалить проверку "if (correctArr)"
+         * внутри this.checkForTrashOnLeftSide и this.checkForTrashOnRightSide */
+          console.log('Начало чисто', this.checkForTrashOnLeftSide(correctGroup))
+          console.log('Конец чисто', this.checkForTrashOnRightSide(correctGroup))
         console.groupEnd()
 
         if (
           this.isOnlyOneCorrectGroup(sortedByType)
-          && this.checkForTrashOnLeftSide(correctGroup)
-          && this.checkForTrashOnRightSide(correctGroup)
-          && this.isTheRangesCorrect(correctGroup)
+            && this.checkForTrashOnLeftSide(correctGroup)
+            && this.checkForTrashOnRightSide(correctGroup)
+            && this.isTheRangesCorrect(correctGroup)
         ) {
           this.finalCoordinates = this.transformCoordinatesToDecimalFormat(correctGroup)
           this.isValid = true
         } else {
-          console.error('Координаты невалидны! (Модель)')
           this.isValid = false
         }
       }
     }
   }
 
-  private getCorrectGroup(groups): string[] {
-    return groups.find(group =>
-      this.isEvenQuantityOfCoordinates(group)
-      && this.isValidByStrictRegExp(group)
-      && this.isInTheRightOrder(group)
-      && this.isSameTypeOfCoordinates()
+  private getCorrectGroup(groups: string[][]): string[] {
+    return groups.find((group: string[]) => {
+        this.setCalledRegExpsIndexes(group)
+
+        return this.isEvenQuantityOfCoordinates(group)
+          && this.isInTheRightOrder(group)
+          && this.isSameTypeOfCoordinates()
+      }
     )
   }
 
-  private isOnlyOneCorrectGroup(groups): boolean {
-    const correctGroups = groups.filter((group: string[]) =>
-      this.isEvenQuantityOfCoordinates(group)
-      && this.isValidByStrictRegExp(group)
-      && this.isInTheRightOrder(group)
-      && this.isSameTypeOfCoordinates()
+  private isOnlyOneCorrectGroup(groups: string[][]): boolean {
+    const correctGroups = groups.filter((group: string[]) => {
+        this.setCalledRegExpsIndexes(group)
+
+        return this.isEvenQuantityOfCoordinates(group)
+          && this.isInTheRightOrder(group)
+          && this.isSameTypeOfCoordinates()
+      }
     )
 
     return correctGroups.length === 1
+  }
+
+  private checkForTrashOnLeftSide(correctArr: string[]): boolean {
+    if (correctArr) {
+      const [ first ] = correctArr
+      const isEmptyOnLeft: number = this.str.trim().indexOf(first)
+
+      return isEmptyOnLeft === 0
+    }
+  }
+
+  private checkForTrashOnRightSide(correctArr: string[]): boolean {
+    if (correctArr) {
+      const last: string = correctArr[correctArr.length - 1]
+      const pureStr: string = this.str.trim()
+      const endOfStr: string[] = []
+
+      for (let i = 1; i <= last.length; i++) {
+        endOfStr.push(pureStr[pureStr.length - i])
+      }
+
+      return last === endOfStr.reverse().join('')
+    }
   }
 
   private isEvenQuantityOfCoordinates(parts: string[]): boolean {
     return parts.length % 2 === 0
   }
 
-  // TODO переделать метод тк уже не нужно частично
-  private isValidByStrictRegExp(parts: string[]): boolean {
+  private setCalledRegExpsIndexes(parts: string[]): void {
     this.calledRegExpsIndexes = []
-    return parts.every((part: string) => {
-      return this.strictRegExps.some((exp: RegExp, idx: number) => {
-        const isValid = exp.test(part)
-        if (isValid) {
+
+    parts.forEach(part => {
+      this.strictRegExps.forEach((exp, idx) => {
+        if (exp.test(part)) {
           this.calledRegExpsIndexes.push(idx)
-          return exp.test(part)
         }
       })
     })
@@ -278,7 +281,7 @@ export class CoordinatesModel implements ICoordinates {
 
   private check0Type(odds: string[], evens: string[]): boolean {
     const oddsCorrect: boolean = odds.every((part: string) => {
-      const latitude = Number(part.match(/-{0,1}[0-9]{0,}[^°]/)[0]) // 55°
+      const latitude = Number(part.match(/-{0,1}[0-9]{0,}[^°]/)[0])
       return latitude <= 90 && latitude >= -90
     })
 
@@ -292,7 +295,7 @@ export class CoordinatesModel implements ICoordinates {
 
   private check1Type(odds: string[], evens: string[]): boolean {
     const oddsCorrect: boolean = odds.every((part: string) => {
-      const values = part.match(/[0-9]{0,}[^NSСЮEWЗВ]/)[0].split('') // 45N
+      const values = part.match(/[0-9]{0,}[^NSСЮEWЗВ]/)[0].split('')
 
       let latitude: number
       let minutes: number
@@ -319,13 +322,13 @@ export class CoordinatesModel implements ICoordinates {
       if (values.length === 2) {
         latitude = Number(values[0] + values[1])
 
-        return latitude <= 89 && latitude >= -89
+        return latitude <= 90 && latitude >= -90
       }
 
       if (values.length === 1) {
         latitude = Number(values[0])
 
-        return latitude <= 89 && latitude >= -89
+        return latitude <= 90 && latitude >= -90
       }
     })
 
@@ -388,7 +391,7 @@ export class CoordinatesModel implements ICoordinates {
 
   private check2Type(odds: string[], evens: string[]): boolean {
     const oddsCorrect: boolean = odds.every((part: string) => {
-      const latitude = Number(part.match(/[^NSСЮEWЗВ][0-9]{0,}[^°]/)[0]) // N55°
+      const latitude = Number(part.match(/[^NSСЮEWЗВ][0-9]{0,}[^°]/)[0])
       return latitude <= 90 && latitude >= -90
     })
 
@@ -402,7 +405,7 @@ export class CoordinatesModel implements ICoordinates {
 
   private check3Type(odds: string[], evens: string[]): boolean {
     const oddsCorrect: boolean = odds.every((part: string) => {
-      const latitude = Number(part.match(/[0-9]{0,}[^°NSСЮEWЗВ]/)[0]) // 55°N
+      const latitude = Number(part.match(/[0-9]{0,}[^°NSСЮEWЗВ]/)[0])
       return latitude <= 90 && latitude >= -90
     })
 
@@ -416,7 +419,7 @@ export class CoordinatesModel implements ICoordinates {
 
   private check4Type(odds: string[], evens: string[]): boolean {
     const oddsCorrect: boolean = odds.every((part: string) => {
-      const [latitude, minutes] = part.match(/[0-9]{1,}/g) // 55°45′N 55°45′E 55°45′S 55°45′W
+      const [latitude, minutes] = part.match(/[0-9]{1,}/g)
       return +latitude <= 89 && +latitude >= -89 && +minutes <= 59 && +minutes >= 1
     })
 
@@ -430,7 +433,7 @@ export class CoordinatesModel implements ICoordinates {
 
   private check5Type(odds: string[], evens: string[]): boolean {
     const oddsCorrect: boolean = odds.every((part: string) => {
-      const [latitude, decimal] = part.match(/-{0,1}[0-9]{1,}/g) // 55,755831°
+      const [latitude, decimal] = part.match(/-{0,1}[0-9]{1,}/g)
       return +latitude <= 89 && +latitude >= -89 && +decimal <= 999999 && +decimal >= 1
     })
 
@@ -444,7 +447,7 @@ export class CoordinatesModel implements ICoordinates {
 
   private check6Type(odds: string[], evens: string[]): boolean {
     const oddsCorrect: boolean = odds.every((part: string) => {
-      const [latitude, minutes, seconds] = part.match(/[0-9]{1,}/g) // 55°45′20″N
+      const [latitude, minutes, seconds] = part.match(/[0-9]{1,}/g)
       return +latitude <= 89 && +latitude >= -89
         && +minutes <= 59 && +minutes >= 1
         && +seconds <= 59 && +seconds >= 1
@@ -462,7 +465,7 @@ export class CoordinatesModel implements ICoordinates {
 
   private check7Type(odds: string[], evens: string[]): boolean {
     const oddsCorrect: boolean = odds.every((part: string) => {
-      const [latitude, decimal] = part.match(/[0-9]{1,}/g) // N55,755831°
+      const [latitude, decimal] = part.match(/[0-9]{1,}/g)
       return +latitude <= 89 && +latitude >= -89 && +decimal <= 999999 && +decimal >= 1
     })
 
@@ -476,7 +479,7 @@ export class CoordinatesModel implements ICoordinates {
 
   private check8Type(odds: string[], evens: string[]): boolean {
     const oddsCorrect: boolean = odds.every((part: string) => {
-      const [latitude, minutes, seconds, milliseconds] = part.match(/[0-9]{1,}/g) // 55°45′20,9916″N
+      const [latitude, minutes, seconds, milliseconds] = part.match(/[0-9]{1,}/g)
       return +latitude <= 89 && +latitude >= -89
         && +minutes <= 59 && +minutes >= 1
         && +seconds <= 59 && +seconds >= 1
@@ -631,10 +634,6 @@ export class CoordinatesModel implements ICoordinates {
     }
 
     return pairs
-  }
-
-  get result() {
-    return this.finalCoordinates
   }
 }
 

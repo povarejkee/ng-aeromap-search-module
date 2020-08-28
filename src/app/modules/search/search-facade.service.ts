@@ -86,8 +86,21 @@ export class SearchFacade implements IMapAngularModule {
     }
   }
 
-  getCoordinatesInfo(str: string): ICoordinates {
-    return this.searchCore.getCoordinatesInfo(str)
+  getCoordinatesModel(str: string): ICoordinates {
+    return this.searchCore.getCoordinatesModel(str)
+  }
+
+  sendCoordinates(coordinatesModel: ICoordinates): void {
+    this.reset()
+
+    if (!coordinatesModel.isValid) {
+      console.warn('Координаты невалидны! (Компонент)')
+    }
+
+    if (coordinatesModel.finalCoordinates.length !== 0) {
+      this.sendCoordinatesToMapAPI(coordinatesModel.finalCoordinates)
+      console.info('Координаты верны!', coordinatesModel.finalCoordinates)
+    }
   }
 
   sendCoordinatesToMapAPI(coordinates: number[][]): void {

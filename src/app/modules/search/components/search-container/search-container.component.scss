@@ -1,8 +1,9 @@
+@import '../../variables.scss';
+
 .search {
-  display: inline-block;
-  margin: 1rem 0 0 1rem;
-  background-color: #fff;
+  margin: 1rem 1rem 0 1rem;
+  background-color: $primary-color;
   border-radius: 10px;
-  min-width: 500px; // todo временно, пока не будет ясно что делать с адаптивом
+  max-width: 550px;
   position: relative;
 }

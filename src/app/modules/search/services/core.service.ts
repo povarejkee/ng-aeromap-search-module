@@ -48,10 +48,7 @@ export class SearchCore {
     return results
   }
 
-  getCoordinatesInfo(str: string): ICoordinates {
-    const coordinatesModel: ICoordinates = new CoordinatesModel(str)
-    coordinatesModel.setChecks()
-
-    return coordinatesModel
+  getCoordinatesModel(str: string): ICoordinates {
+    return new CoordinatesModel(str)
   }
 }

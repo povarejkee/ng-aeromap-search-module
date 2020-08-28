@@ -6,7 +6,7 @@ const RU = {
   Search: {
     All: 'Все',
     Objects: 'Объекты',
-    Settlements: 'Населенные пункты',
+    Settlements: 'Нас. пункты',
     RestrictedAreas: 'Зоны',
     Highways: 'Трассы',
     Locations: 'Локации',
@@ -22,7 +22,7 @@ const EN = {
     RestrictedAreas: 'Restricted Areas',
     Highways: 'Highways',
     Locations: 'Locations',
-    NotFound: 'No results were found '
+    NotFound: 'No results were found'
   }
 }
 

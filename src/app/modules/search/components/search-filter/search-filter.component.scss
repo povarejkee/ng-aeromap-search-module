@@ -1,16 +1,28 @@
+@import '../../variables.scss';
+
 /* <Переопределения Material-стилей> */
 .mat-button-toggle-group {
   box-shadow: none !important;
+  //flex-wrap: wrap;
 }
 
 .search__filters {
+  width: 100%;
+  justify-content: space-between;
   padding: 0 10px;
+  box-sizing: border-box;
+  margin-bottom: 5px;
+
   .mat-button-toggle-label-content {
-    line-height: 29px !important;
-    color: #333;
+    display: flex;
+    align-items: center;
+    line-height: 24px;
+    color: $text-color;
+    padding: 0 8px;
+    font-size: 13px;
     span {
-      color: rgba(0,0,0,.38);
-      position: relative;
+      color: $secondary-dark-color;
+      margin-left: 3px;
     }
   }
 
@@ -19,7 +31,7 @@
   }
 
   .mat-button-toggle-disabled {
-    background-color: #fff;
+    background-color: $primary-color;
     &:focus {
       outline: none;
     }

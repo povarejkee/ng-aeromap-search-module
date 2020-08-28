@@ -1,3 +1,5 @@
+@import '../../variables.scss';
+
 .search__result-category-item {
   display: flex;
   justify-content: space-between;
@@ -6,7 +8,7 @@
   cursor: pointer;
   transition: background-color .2s;
   &:hover {
-    background-color: #e0e0e0;
+    background-color: $secondary-color;
   }
 
   &-leftside {
