@@ -94,6 +94,12 @@ export class SearchFacade implements IMapAngularModule {
     this.reset()
 
     if (!coordinatesModel.isValid) {
+      this.mapApi.execute(
+        'DrawOnMapService',
+        'ErrorFunction',
+        'Неверный формат координат'
+      )
+
       console.warn('Координаты невалидны! (Компонент)')
     }
 
@@ -105,6 +111,10 @@ export class SearchFacade implements IMapAngularModule {
 
   sendCoordinatesToMapAPI(coordinates: number[][]): void {
     // todo очищать карту перед каждым обновлением
+    this.mapApi.execute(
+      'DrawOnMapService',
+      'RemoveGeomFunction'
+    )
 
     if (coordinates.length === 1) {
       this.mapApi.execute(

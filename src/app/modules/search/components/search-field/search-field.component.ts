@@ -20,6 +20,7 @@ export class SearchFieldComponent implements AfterViewInit, OnDestroy {
 
   private coordinatesModel: ICoordinates
   private unsubscribe$: Subject<any> = new Subject<any>()
+  private freezeOnChange: boolean = false
 
   constructor(private searchFacade: SearchFacade) {}
 
@@ -28,20 +29,34 @@ export class SearchFieldComponent implements AfterViewInit, OnDestroy {
       .pipe(
         takeUntil(this.unsubscribe$),
         pluck('target', 'value'),
-        debounceTime(1500),
+        debounceTime(600),
         mergeMap((str: string) => {
-          this.coordinatesModel = this.searchFacade.getCoordinatesModel(str)
-          this.coordinatesModel.setChecks()
-
           return iif(
-            () => this.coordinatesModel.coordinatesPresents,
+            () => this.freezeOnChange,
+
             of(str).pipe(
-              tap(() => this.searchFacade.sendCoordinates(this.coordinatesModel))
+              tap(() => this.freezeOnChange = false)
             ),
+
             of(str).pipe(
-              tap((str: string) => str.length < 3 && this.searchFacade.stopRequest()),
-              filter((str: string) => str.length > 2),
-              tap((str: string) => this.searchFacade.loadSearchItems(str))
+              mergeMap(() => {
+                this.coordinatesModel = this.searchFacade.getCoordinatesModel(str)
+                this.coordinatesModel.setChecks()
+
+                return iif(
+                  () => this.coordinatesModel.coordinatesPresents,
+
+                  of(str).pipe(
+                    tap(() => this.searchFacade.sendCoordinates(this.coordinatesModel))
+                  ),
+
+                  of(str).pipe(
+                    tap((str: string) => str.length < 3 && this.searchFacade.stopRequest()),
+                    filter((str: string) => str.length > 2),
+                    tap((str: string) => this.searchFacade.loadSearchItems(str))
+                  )
+                )
+              })
             )
           )
         }),
@@ -61,6 +76,7 @@ export class SearchFieldComponent implements AfterViewInit, OnDestroy {
 
   onEnterPressHandler(event: KeyboardEvent): void {
     if (!this.coordinatesModel?.coordinatesPresents) {
+      this.freezeOnChange = true
       this.searchFacade.onEnterPressHandler(event)
     }
   }
