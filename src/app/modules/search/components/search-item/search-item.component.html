@@ -1,22 +1,22 @@
 <div
-  class="search__result-category-item"
+  class="search__result-category-item mt-4"
   [ngClass] = "{
     'search__result-category-item_last': itemsLength - 1 === index
   }"
 >
   <div class="search__result-category-item-leftside">
-    <mat-icon matPrefix>add_location</mat-icon>
-    <p class="search__result-category-item-leftside-text">
-          <span class="search__result-category-item-leftside-text-title">
-            {{ item.name + ': ' + item.index + ', ' + item.id }}
-          </span>
-      <span class="search__result-category-item-leftside-text-coordinates">
+    <mat-icon matPrefix svgIcon="geo-pin">add_location</mat-icon>
+    <div class="search__result-category-item-leftside-text ml-3">
+      <span class="search__result-category-item-leftside-text-title">
+        {{ item.name + ': ' + item.index + ', ' + item.id }}
+      </span>
+      <span class="search__result-category-item-leftside-text-coordinates als-font-small">
         {{ item.lat && item.lon ? item.lat + ', ' + item.lon : 'Тут будет что-то, характерное для данного типа' }}
       </span>
-    </p>
+    </div>
   </div>
   <div class="search__result-category-item-rightside">
-    <mat-icon matPrefix>info</mat-icon>
-    <mat-icon matPrefix>add_circle</mat-icon>
+    <mat-icon matPrefix svgIcon="info"></mat-icon>
+    <mat-icon matPrefix svgIcon="plus"></mat-icon>
   </div>
 </div>

@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 
 import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
@@ -10,11 +10,10 @@ import { SearchFacade } from "../../search-facade.service";
 @Component({
   selector: 'app-search-filter',
   templateUrl: './search-filter.component.html',
-  styleUrls: ['./search-filter.component.scss'],
-  encapsulation : ViewEncapsulation.None // понадобилось, чтобы перебить стили Material
+  styleUrls: ['./search-filter.component.scss']
 })
 export class SearchFilterComponent implements OnInit, OnDestroy {
-  public searchItems: IResults
+  @Input() searchItems: IResults
 
   private unsubscribe$: Subject<any> = new Subject<any>()
 
@@ -29,9 +28,5 @@ export class SearchFilterComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.unsubscribe$.next()
     this.unsubscribe$.complete()
-  }
-
-  setSearchFilter(eventEmitter): void {
-    this.searchFacade.setSearchFilter(eventEmitter.value)
   }
 }

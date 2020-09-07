@@ -25,7 +25,12 @@
             "aot": true,
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              {
+                "glob": "**/*",
+                "input": "node_modules/@monitorsoft/als-ui/src/assets/icons",
+                "output": "/assets/als-icons"
+              }
             ],
             "styles": [
               "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
@@ -130,6 +135,6 @@
   },
   "defaultProject": "aeromap-search",
   "cli": {
-    "analytics": false
-  }
+    "analytics": "875889fb-0dad-4468-b43d-c3254b842da9"
+  },
 }

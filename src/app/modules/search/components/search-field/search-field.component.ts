@@ -1,7 +1,7 @@
-import { AfterViewInit, Component, ElementRef, Input, OnDestroy, ViewChild, ViewEncapsulation } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Input, OnDestroy, ViewChild } from '@angular/core';
 
 import { fromEvent, iif, of, Subject } from "rxjs";
-import { debounceTime, distinctUntilChanged, filter, mergeMap, pluck, takeUntil, tap } from "rxjs/operators";
+import { debounceTime, filter, mergeMap, pluck, takeUntil, tap } from "rxjs/operators";
 
 import { SearchFacade } from "../../search-facade.service";
 import {ICoordinates} from "../../models/Coordinates.interface";
@@ -9,8 +9,7 @@ import {ICoordinates} from "../../models/Coordinates.interface";
 @Component({
   selector: 'app-search-field',
   templateUrl: './search-field.component.html',
-  styleUrls: ['./search-field.component.scss'],
-  encapsulation : ViewEncapsulation.None // понадобилось, чтобы перебить стили Material
+  styleUrls: ['./search-field.component.scss']
 })
 export class SearchFieldComponent implements AfterViewInit, OnDestroy {
   @Input() isLoading: boolean

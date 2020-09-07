@@ -1,44 +1,35 @@
 @import '../../variables.scss';
 
-/* <Переопределения Material-стилей> */
-.mat-button-toggle-group {
-  box-shadow: none !important;
-  //flex-wrap: wrap;
+::-webkit-scrollbar {
+  width: 0.5em;
+  height: 0.5em;
 }
 
-.search__filters {
-  width: 100%;
-  justify-content: space-between;
-  padding: 0 10px;
+::-webkit-scrollbar-thumb {
+  background: $secondary-dark-color;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: $primary-color;
+  border-radius: 10px;
+}
+
+
+.search__result {
+  &-categories {
+    max-height: 300px;
+    overflow-y: auto;
+  }
+}
+
+.no-results {
+  position: absolute;
+  background-color: $primary-color;
+  padding: 5px;
+  border-radius: 10px;
+  bottom: -35px;
   box-sizing: border-box;
-  margin-bottom: 5px;
-
-  .mat-button-toggle-label-content {
-    display: flex;
-    align-items: center;
-    line-height: 24px;
-    color: $text-color;
-    padding: 0 8px;
-    font-size: 13px;
-    span {
-      color: $secondary-dark-color;
-      margin-left: 3px;
-    }
-  }
-
-  .mat-button-toggle-checked {
-    border-radius: 10px;
-  }
-
-  .mat-button-toggle-disabled {
-    background-color: $primary-color;
-    &:focus {
-      outline: none;
-    }
-  }
-
-  .mat-ripple .mat-button-toggle-ripple {
-    border-radius: 10px;
-  }
+  width: 100%;
+  text-align: center;
 }
-/* </Переопределения Material-стилей> */

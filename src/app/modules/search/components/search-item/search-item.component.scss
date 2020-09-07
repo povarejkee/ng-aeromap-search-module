@@ -4,7 +4,6 @@
   display: flex;
   justify-content: space-between;
   padding: 10px 5px;
-  margin-top: 10px;
   cursor: pointer;
   transition: background-color .2s;
   &:hover {
@@ -17,9 +16,9 @@
     &-text {
       display: flex;
       flex-direction: column;
-      margin: 0 0 0 5px;
+      //margin: 0 0 0 5px;
       &-coordinates {
-        font-size: 12px;
+        //font-size: 12px;
       }
     }
   }

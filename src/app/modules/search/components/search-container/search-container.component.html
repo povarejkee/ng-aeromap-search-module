@@ -2,9 +2,8 @@
   <app-search-field
     [isLoading] = "isLoading$ | async"
   ></app-search-field>
-  <app-search-results
+  <app-search-filter
     *ngIf = "searchItems$ | async as items"
-    [items] = "items"
-    [searchFilter] = "searchFilter$ | async"
-  ></app-search-results>
+    [searchItems] = "items"
+  ></app-search-filter>
 </div>

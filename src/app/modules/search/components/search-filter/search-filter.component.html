@@ -1,4 +1,4 @@
-<mat-button-toggle-group
+<!--<mat-button-toggle-group
   class="search__filters"
   appearance="legacy"
   name="filters"
@@ -28,4 +28,100 @@
     {{ 'Search.Locations' | translate }}
     <span>{{ searchItems?.locations?.length || 0 }}</span>
   </mat-button-toggle>
-</mat-button-toggle-group>
+</mat-button-toggle-group>-->
+
+<section *ngIf = "searchItems.summaryLength; else noResults" class="search__result">
+  <mat-tab-group alsTabGroup="default" animationDuration="0ms">
+    <mat-tab
+      [label] = "('Search.All' | translate) + ' ' + searchItems?.summaryLength "
+      [disabled] = "!searchItems?.summaryLength"
+    >
+      <div class="search__result-categories">
+        <app-search-category
+          *ngIf = "searchItems.objects.length"
+          [label] = "'Search.Objects' | translate"
+          [items] = "searchItems.objects"
+        ></app-search-category>
+        <app-search-category
+          *ngIf = "searchItems.settlements.length"
+          [label] = "'Search.Settlements' | translate"
+          [items] = "searchItems.settlements"
+        ></app-search-category>
+        <app-search-category
+          *ngIf = "searchItems.restrictedAreas.length"
+          [label] = "'Search.RestrictedAreas' | translate"
+          [items] = "searchItems.restrictedAreas"
+        ></app-search-category>
+        <app-search-category
+          *ngIf = "searchItems.highways.length"
+          [label] = "'Search.Highways' | translate"
+          [items] = "searchItems.highways"
+        ></app-search-category>
+        <app-search-category
+          *ngIf = "searchItems.locations.length"
+          [label] = "'Search.Locations' | translate"
+          [items] = [searchItems.locations]
+        ></app-search-category>
+      </div>
+    </mat-tab>
+    <mat-tab
+      [label] = "('Search.Objects' | translate) + ' ' + searchItems?.objects?.length"
+      [disabled] = "!searchItems?.objects?.length"
+    >
+      <div class="search__result-categories">
+        <app-search-category
+          [label] = "'Search.Objects' | translate"
+          [items] = "searchItems.objects"
+        ></app-search-category>
+      </div>
+    </mat-tab>
+    <mat-tab
+      [label] = "('Search.Settlements' | translate) + ' ' + searchItems?.settlements?.length"
+      [disabled] = "!searchItems?.settlements?.length"
+    >
+      <div class="search__result-categories">
+        <app-search-category
+          [label] = "'Search.Settlements' | translate"
+          [items] = "searchItems.settlements"
+        ></app-search-category>
+      </div>
+    </mat-tab>
+    <mat-tab
+      [label] = "('Search.RestrictedAreas' | translate) + ' ' + searchItems?.restrictedAreas?.length"
+      [disabled] = "!searchItems?.restrictedAreas?.length"
+    >
+      <div class="search__result-categories">
+        <app-search-category
+          [label] = "'Search.RestrictedAreas' | translate"
+          [items] = "searchItems.restrictedAreas"
+        ></app-search-category>
+      </div>
+    </mat-tab>
+    <mat-tab
+      [label] = "('Search.Highways' | translate) + ' ' + searchItems?.highways?.length"
+      [disabled] = "!searchItems?.highways?.length"
+    >
+      <div class="search__result-categories">
+        <app-search-category
+          [label] = "'Search.Highways' | translate"
+          [items] = "searchItems.highways"
+        ></app-search-category>
+      </div>
+    </mat-tab>
+    <mat-tab
+      [label] = "('Search.Locations' | translate) + ' ' +  searchItems?.locations?.length"
+      [disabled] = "!searchItems?.locations?.length"
+    >
+      <div class="search__result-categories">
+        <app-search-category
+          [label] = "'Search.Locations' | translate"
+          [items] = [searchItems.locations]
+        ></app-search-category>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+</section>
+
+<ng-template #noResults>
+  <div class="no-results">{{ 'Search.NotFound' | translate }}</div>
+</ng-template>

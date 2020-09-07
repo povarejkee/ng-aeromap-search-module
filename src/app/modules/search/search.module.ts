@@ -5,10 +5,10 @@ import { FormsModule } from "@angular/forms";
 
 import { TranslateModule } from '@ngx-translate/core';
 import { MaterialModule } from "./material.module";
+import {AlsIconModule, AlsTabsModule} from "@monitorsoft/als-ui";
 
 import { SearchContainerComponent } from './components/search-container/search-container.component';
 import { SearchFieldComponent } from './components/search-field/search-field.component';
-import { SearchResultsComponent } from './components/search-results/search-results.component';
 import { SearchItemComponent } from "./components/search-item/search-item.component";
 import { SearchFilterComponent } from "./components/search-filter/search-filter.component";
 import { SearchCategoryComponent } from "./components/search-category/search-category.component";
@@ -22,7 +22,6 @@ import { SearchCore } from "./services/core.service";
   declarations: [
     SearchContainerComponent,
     SearchFieldComponent,
-    SearchResultsComponent,
     SearchItemComponent,
     SearchFilterComponent,
     SearchCategoryComponent
@@ -32,7 +31,9 @@ import { SearchCore } from "./services/core.service";
     MaterialModule,
     HttpClientModule,
     FormsModule,
-    TranslateModule
+    TranslateModule,
+    AlsIconModule,
+    AlsTabsModule
   ],
   exports: [
     SearchContainerComponent,

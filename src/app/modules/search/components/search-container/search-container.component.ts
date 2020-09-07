@@ -14,13 +14,11 @@ import { SearchFacade } from "../../search-facade.service";
 export class SearchContainerComponent implements OnInit {
   public searchItems$: Observable<IResults>
   public isLoading$: Observable<boolean>
-  public searchFilter$: Observable<string>
 
   constructor(private searchFacade: SearchFacade) {}
 
   ngOnInit(): void {
     this.searchItems$ = this.searchFacade.getSearchItems$()
     this.isLoading$ = this.searchFacade.getLoadingStatus$()
-    this.searchFilter$ = this.searchFacade.getSearchFilter$()
   }
 }

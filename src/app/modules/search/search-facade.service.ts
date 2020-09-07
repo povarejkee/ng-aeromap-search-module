@@ -35,10 +35,6 @@ export class SearchFacade implements IMapAngularModule {
     return this.searchState.getLoadingStatus$()
   }
 
-  getSearchFilter$(): Observable<string> {
-    return this.searchState.getSearchFilter$()
-  }
-
   loadSearchItems(str: string): void {
     this.stopRequest()
 
@@ -58,10 +54,6 @@ export class SearchFacade implements IMapAngularModule {
           this.searchState.setLoadingStatus(false) // почему не срабатывает для error? complete() же выполняется даже в случае ошибки!
         }
       )
-  }
-
-  setSearchFilter(filter: string): void {
-    this.searchState.setSearchFilter(filter)
   }
 
   stopRequest(): void {

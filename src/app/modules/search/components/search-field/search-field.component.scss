@@ -17,23 +17,20 @@
 }
 
 /* <Переопределения Material-стилей> */
-
-/* https://stackoverflow.com/questions/53684763/how-to-remove-space-bottom-mat-form-field */
-
-.search__header .mat-form-field-underline {
+:host ::ng-deep .mat-form-field-underline {
   display: none;
 }
 
-.search__header .mat-form-field-appearance-legacy .mat-form-field-wrapper {
+:host ::ng-deep .mat-form-field-appearance-legacy .mat-form-field-wrapper {
   padding: 3px 0;
 }
 
-.search__header .mat-form-field-infix {
+:host ::ng-deep .mat-form-field-infix {
   border-top: 0;
 }
 
-.search__header .mat-form-field-prefix,
-.search__header .mat-form-field-suffix {
+:host ::ng-deep .mat-form-field-prefix,
+:host ::ng-deep .mat-form-field-suffix {
   position: relative;
   top: 4px;
 }
