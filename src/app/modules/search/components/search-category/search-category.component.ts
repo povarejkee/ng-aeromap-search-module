@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input } from '@angular/core'
 
 @Component({
   selector: 'app-search-category',
@@ -6,10 +6,10 @@ import { Component, Input } from '@angular/core';
   styleUrls: ['./search-category.component.scss']
 })
 export class SearchCategoryComponent {
-  @Input() items: any
-  @Input() label: string
+  @Input() public items: any
+  @Input() public label: string
 
-  trackByFn(index: number, item: any): string {
+  public trackByFn(index: number, item: any): string {
     return `${item.type}-${item.id}`
   }
 }

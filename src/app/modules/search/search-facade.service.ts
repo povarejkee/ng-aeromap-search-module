@@ -1,20 +1,20 @@
-import { Injectable } from "@angular/core";
+import { Injectable } from "@angular/core"
 
-import { Observable, Subscription } from "rxjs";
+import { Observable, Subscription } from "rxjs"
 
-import { IMapAngularModule } from "./models/MapAngularModule.interface";
-import { ILocalization } from "./models/Localization.interface";
-import { IResults } from "./models/Results.interface";
-import { ICoordinates } from "./models/Coordinates.interface";
-import { IResponse } from "./models/Response.interface";
+import { IMapAngularModule } from "./models/MapAngularModule.interface"
+import { ILocalization } from "./models/Localization.interface"
+import { IResults } from "./models/Results.interface"
+import { ICoordinates } from "./models/Coordinates.interface"
+import { IResponse } from "./models/Response.interface"
 
-import { EN } from "./localization/en";
-import { RU } from "./localization/ru";
+import { EN } from "./localization/en"
+import { RU } from "./localization/ru"
 
-import { SearchApi } from "./services/api.service";
-import { SearchState } from "./services/state.service";
-import { SearchCore } from "./services/core.service";
-import { MapApi } from "../../../common/api.service";
+import { SearchApi } from "./services/api.service"
+import { SearchState } from "./services/state.service"
+import { SearchCore } from "./services/core.service"
+import { MapApi } from "../../../common/api.service"
 
 @Injectable()
 export class SearchFacade implements IMapAngularModule {
@@ -27,15 +27,15 @@ export class SearchFacade implements IMapAngularModule {
     private mapApi: MapApi
   ) {}
 
-  getSearchItems$(): Observable<IResults> {
+  public getSearchItems$(): Observable<IResults> {
     return this.searchState.getSearchItems$()
   }
 
-  getLoadingStatus$(): Observable<boolean> {
+  public getLoadingStatus$(): Observable<boolean> {
     return this.searchState.getLoadingStatus$()
   }
 
-  loadSearchItems(str: string): void {
+  public loadSearchItems(str: string): void {
     this.stopRequest()
 
     this.searchState.setLoadingStatus(true)
@@ -56,7 +56,7 @@ export class SearchFacade implements IMapAngularModule {
       )
   }
 
-  stopRequest(): void {
+  public stopRequest(): void {
     this.searchState.setLoadingStatus(false)
 
     if (this.searchItemsAPISub) {
@@ -65,12 +65,12 @@ export class SearchFacade implements IMapAngularModule {
     }
   }
 
-  reset(): void {
+  public reset(): void {
     this.stopRequest()
     this.searchState.setSearchItems(null)
   }
 
-  onEnterPressHandler(event: KeyboardEvent): void {
+  public onEnterPressHandler(event: KeyboardEvent): void {
     const { value } = event.target as HTMLInputElement
 
     if (value.length > 2) {
@@ -78,11 +78,11 @@ export class SearchFacade implements IMapAngularModule {
     }
   }
 
-  getCoordinatesModel(str: string): ICoordinates {
+  public getCoordinatesModel(str: string): ICoordinates {
     return this.searchCore.getCoordinatesModel(str)
   }
 
-  sendCoordinates(coordinatesModel: ICoordinates): void {
+  public sendCoordinates(coordinatesModel: ICoordinates): void {
     this.reset()
 
     if (!coordinatesModel.isValid) {
@@ -101,7 +101,7 @@ export class SearchFacade implements IMapAngularModule {
     }
   }
 
-  sendCoordinatesToMapAPI(coordinates: number[][]): void {
+  public sendCoordinatesToMapAPI(coordinates: number[][]): void {
     // todo очищать карту перед каждым обновлением
     this.mapApi.execute(
       'DrawOnMapService',
@@ -147,7 +147,7 @@ export class SearchFacade implements IMapAngularModule {
     }
   }
 
-  GetTranslations(): ILocalization {
+  public GetTranslations(): ILocalization {
     return {
       en: EN,
       ru: RU

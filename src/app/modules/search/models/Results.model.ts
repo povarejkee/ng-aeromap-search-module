@@ -1,4 +1,4 @@
-import { IResults } from "./Results.interface";
+import { IResults } from "./Results.interface"
 
 export class ResultsModel implements IResults {
   public objects: any = []

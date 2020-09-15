@@ -2,6 +2,7 @@
   <mat-form-field class="search__header-field">
     <mat-icon matPrefix>search</mat-icon>
     <input
+      class="als-text-black"
       matInput
       #inputSearch
       [(ngModel)] = "value"
@@ -14,7 +15,7 @@
       *ngIf = "inputSearch.value.trim()"
       (click) = "reset()"
       matSuffix
-      class="search__header-field-reset"
+      class="search__header-field-reset als-text-light-grey"
     >
       cancel
     </mat-icon>

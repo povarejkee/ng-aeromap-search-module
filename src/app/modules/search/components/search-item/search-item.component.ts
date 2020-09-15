@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input } from '@angular/core'
 
 @Component({
   selector: 'app-search-item',
@@ -6,7 +6,7 @@ import { Component, Input } from '@angular/core';
   styleUrls: ['./search-item.component.scss']
 })
 export class SearchItemComponent {
-  @Input() item: any
+  @Input() public item: any
 
   /**
    * Получение index и itemsLength нужно для того,
@@ -15,6 +15,6 @@ export class SearchItemComponent {
    * элементу search-item, тк возникли сложности с селектором в css из-за обёртки,
    * в которую Ангуляр заворачивает компонент search-item
    * (нет возможности получить last-child). */
-  @Input() index: number
-  @Input() itemsLength: number
+  @Input() public index: number
+  @Input() public itemsLength: number
 }

@@ -1,10 +1,10 @@
-import { AfterViewInit, Component, ElementRef, Input, OnDestroy, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Input, OnDestroy, ViewChild } from '@angular/core'
 
-import { fromEvent, iif, of, Subject } from "rxjs";
-import { debounceTime, filter, mergeMap, pluck, takeUntil, tap } from "rxjs/operators";
+import { fromEvent, iif, of, Subject } from "rxjs"
+import { debounceTime, filter, mergeMap, pluck, takeUntil, tap } from "rxjs/operators"
 
-import { SearchFacade } from "../../search-facade.service";
-import {ICoordinates} from "../../models/Coordinates.interface";
+import { SearchFacade } from "../../search-facade.service"
+import {ICoordinates} from "../../models/Coordinates.interface"
 
 @Component({
   selector: 'app-search-field',
@@ -12,8 +12,8 @@ import {ICoordinates} from "../../models/Coordinates.interface";
   styleUrls: ['./search-field.component.scss']
 })
 export class SearchFieldComponent implements AfterViewInit, OnDestroy {
-  @Input() isLoading: boolean
-  @ViewChild('inputSearch') inputRef: ElementRef
+  @Input() public isLoading: boolean
+  @ViewChild('inputSearch') private inputRef: ElementRef
 
   public value: string = ''
 
@@ -68,12 +68,12 @@ export class SearchFieldComponent implements AfterViewInit, OnDestroy {
     this.unsubscribe$.complete()
   }
 
-  reset(): void {
+  public reset(): void {
     this.value = ''
     this.searchFacade.reset()
   }
 
-  onEnterPressHandler(event: KeyboardEvent): void {
+  public onEnterPressHandler(event: KeyboardEvent): void {
     if (!this.coordinatesModel?.coordinatesPresents) {
       this.freezeOnChange = true
       this.searchFacade.onEnterPressHandler(event)

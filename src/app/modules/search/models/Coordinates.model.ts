@@ -1,4 +1,4 @@
-import { ICoordinates } from "./Coordinates.interface";
+import { ICoordinates } from "./Coordinates.interface"
 
 export class CoordinatesModel implements ICoordinates {
   readonly str: string

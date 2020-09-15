@@ -16,16 +16,20 @@
     &-text {
       display: flex;
       flex-direction: column;
-      //margin: 0 0 0 5px;
-      &-coordinates {
-        //font-size: 12px;
-      }
+      &-coordinates {}
     }
   }
 
   &-rightside {
     display: flex;
     align-items: center;
+    &-iconInfo {
+      margin-right: .5rem;
+    }
+    &-iconPlus {
+      height: 32px;
+      width: 32px;
+    }
   }
 
   &_last {

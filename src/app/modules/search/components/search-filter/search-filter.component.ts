@@ -1,11 +1,11 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core'
 
-import { Subject } from "rxjs";
-import { takeUntil } from "rxjs/operators";
+import { Subject } from "rxjs"
+import { takeUntil } from "rxjs/operators"
 
-import { IResults } from "../../models/Results.interface";
+import { IResults } from "../../models/Results.interface"
 
-import { SearchFacade } from "../../search-facade.service";
+import { SearchFacade } from "../../search-facade.service"
 
 @Component({
   selector: 'app-search-filter',
@@ -13,7 +13,7 @@ import { SearchFacade } from "../../search-facade.service";
   styleUrls: ['./search-filter.component.scss']
 })
 export class SearchFilterComponent implements OnInit, OnDestroy {
-  @Input() searchItems: IResults
+  @Input() public searchItems: IResults
 
   private unsubscribe$: Subject<any> = new Subject<any>()
 

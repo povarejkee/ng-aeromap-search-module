@@ -1,10 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core'
 
-import { Observable } from "rxjs";
+import { Observable } from "rxjs"
 
-import { IResults } from "../../models/Results.interface";
+import { IResults } from "../../models/Results.interface"
 
-import { SearchFacade } from "../../search-facade.service";
+import { SearchFacade } from "../../search-facade.service"
 
 @Component({
   selector: 'app-search-container',

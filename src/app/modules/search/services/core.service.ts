@@ -1,14 +1,14 @@
-import { Injectable } from "@angular/core";
+import { Injectable } from "@angular/core"
 
-import { IResults } from "../models/Results.interface";
-import { ResultsModel } from "../models/Results.model";
-import { ICoordinates } from "../models/Coordinates.interface";
-import { CoordinatesModel } from "../models/Coordinates.model";
-import { IResponse } from "../models/Response.interface";
+import { IResults } from "../models/Results.interface"
+import { ResultsModel } from "../models/Results.model"
+import { ICoordinates } from "../models/Coordinates.interface"
+import { CoordinatesModel } from "../models/Coordinates.model"
+import { IResponse } from "../models/Response.interface"
 
 @Injectable()
 export class SearchCore {
-  transformSearchItems(items: IResponse): IResults {
+  public transformSearchItems(items: IResponse): IResults {
     const results: IResults = new ResultsModel()
 
     console.log('результаты поиска', items)
@@ -48,7 +48,7 @@ export class SearchCore {
     return results
   }
 
-  getCoordinatesModel(str: string): ICoordinates {
+  public getCoordinatesModel(str: string): ICoordinates {
     return new CoordinatesModel(str)
   }
 }
