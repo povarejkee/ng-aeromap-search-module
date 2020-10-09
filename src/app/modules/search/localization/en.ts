@@ -6,6 +6,6 @@ export const EN = {
     RestrictedAreas: 'Restricted Areas',
     Highways: 'Highways',
     Locations: 'Locations',
-    NotFound: 'No results were found'
-  }
-}
+    NotFound: 'No results were found',
+  },
+};

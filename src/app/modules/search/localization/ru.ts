@@ -6,6 +6,6 @@ export const RU = {
     RestrictedAreas: 'Зоны',
     Highways: 'Трассы',
     Locations: 'Локации',
-    NotFound: 'По вашему запросу ничего не найдено'
-  }
-}
+    NotFound: 'По вашему запросу ничего не найдено',
+  },
+};

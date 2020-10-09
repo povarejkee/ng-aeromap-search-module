@@ -1,9 +1,9 @@
-import { ICoordinates } from "./Coordinates.interface"
+import { ICoordinates } from './Coordinates.interface';
 
 export class CoordinatesModel implements ICoordinates {
-  readonly str: string
+  readonly str: string;
 
-  public finalCoordinates: number[][] = []
+  public finalCoordinates: number[][] = [];
   public strictRegExps: RegExp[] = [
     /^-{0,1}[0-9]{1,3}[°]{1}$/,
     /^[0-9]{1,7}[NSСЮEWЗВ]{1}$/,
@@ -13,8 +13,8 @@ export class CoordinatesModel implements ICoordinates {
     /^-{0,1}[0-9]{1,3}[,|.][0-9]{1,10}[°]{1}$/,
     /^[0-9]{1,3}[°]{0,1}[0-9]{1,2}[′]{1}[0-9]{1,2}[″]{1}[NSСЮEWЗВ]{1}$/,
     /^[NSСЮEWЗВ]{1}[0-9]{1,3}[,|.][0-9]{1,10}[°]$/,
-    /^[0-9]{1,3}[°]{0,1}[0-9]{1,2}[′]{1}[0-9]{1,2}[,|.][0-9]{1,10}[″]{1}[NSСЮEWЗВ]{1}$/
-  ]
+    /^[0-9]{1,3}[°]{0,1}[0-9]{1,2}[′]{1}[0-9]{1,2}[,|.][0-9]{1,10}[″]{1}[NSСЮEWЗВ]{1}$/,
+  ];
   public partialRegExps: RegExp[] = [
     /-{0,1}[0-9]{1,3}[°]{1}/g,
     // [0] 55° 55° 55° 55°
@@ -32,73 +32,69 @@ export class CoordinatesModel implements ICoordinates {
     // [6] 55°45′20″N 55°45′20″W 55°45′20″N 55°45′20″E
     /[NSСЮEWЗВ]{1}[0-9]{1,3}[,|.][0-9]{1,10}[°]/g,
     // [7] N55,755831° W55,755831° N55,755831° E55,755831°
-    /[0-9]{1,3}[°]{0,1}[0-9]{1,2}[′]{1}[0-9]{1,2}[,|.][0-9]{1,10}[″]{1}[NSСЮEWЗВ]{1}/g
+    /[0-9]{1,3}[°]{0,1}[0-9]{1,2}[′]{1}[0-9]{1,2}[,|.][0-9]{1,10}[″]{1}[NSСЮEWЗВ]{1}/g,
     // [8] 55°45′20,9916″N 55°45′20,9916″W 55°45′20,9916″N 55°45′20,9916″E
-  ]
-  public coordinatesPresents: boolean = false
-  public isValid: boolean = false
+  ];
+  public coordinatesPresents: boolean = false;
+  public isValid: boolean = false;
 
-  private activeType: number = null
-  private calledRegExpsIndexes: number[] = []
+  private activeType: number = null;
+  private calledRegExpsIndexes: number[] = [];
 
   constructor(str: string) {
-    this.str = str
+    this.str = str;
   }
 
   public setChecks(): void {
     if (this.str.length > 2) {
-      this.coordinatesPresents
-        = this.partialRegExps.some((exp: RegExp) => exp.test(this.str))
+      this.coordinatesPresents = this.partialRegExps.some((exp: RegExp) => exp.test(this.str));
 
       if (this.coordinatesPresents) {
-        const allMatches: string[] = []
+        const allMatches: string[] = [];
 
         for (let i = 0; i < this.partialRegExps.length; i++) {
-          const matches = this.str.match(this.partialRegExps[i])
+          const matches = this.str.match(this.partialRegExps[i]);
           if (matches) {
-            allMatches.push(...matches)
+            allMatches.push(...matches);
           }
         }
 
-        const sortedByType: string[][] = this.partialRegExps.reduce((
-          accumulator: string[][],
-          exp: RegExp,
-        ) => {
+        const sortedByType: string[][] = this.partialRegExps.reduce((accumulator: string[][], exp: RegExp) => {
           const filteredByType: string[] = allMatches.filter((part: string) => {
-            const _exp: RegExp = new RegExp(exp) // пиздец какой-то
-            return _exp.test(part)
-          })
+            const _exp: RegExp = new RegExp(exp); // пиздец какой-то
+            return _exp.test(part);
+          });
 
           if (filteredByType.length) {
-            accumulator.push(filteredByType)
+            accumulator.push(filteredByType);
           }
 
-          return accumulator
-        }, [])
+          return accumulator;
+        }, []);
 
-        const correctGroup: string[] = this.getCorrectGroup(sortedByType)
+        const correctGroup: string[] = this.getCorrectGroup(sortedByType);
 
-        console.group()
-          console.log('Все совпадения', allMatches)
-          console.log('Сортировка по типам совпадений', sortedByType)
-          console.log('Верная группа из сортированных типов', correctGroup)
+        console.group();
+        console.log('Все совпадения', allMatches);
+        console.log('Сортировка по типам совпадений', sortedByType);
+        console.log('Верная группа из сортированных типов', correctGroup);
         /** todo
          * После того, как удалю эти логи -- удалить проверку "if (correctArr)"
          * внутри this.checkForTrashOnLeftSide и this.checkForTrashOnRightSide */
-          console.log('Начало чисто', this.checkForTrashOnLeftSide(correctGroup))
-          console.log('Конец чисто', this.checkForTrashOnRightSide(correctGroup))
-        console.groupEnd()
+        console.log('Начало чисто', this.checkForTrashOnLeftSide(correctGroup));
+        console.log('Конец чисто', this.checkForTrashOnRightSide(correctGroup));
+        console.groupEnd();
 
         if (
-          this.isOnlyOneCorrectGroup(sortedByType)
-            && this.checkForTrashOnLeftSide(correctGroup)
-            && this.checkForTrashOnRightSide(correctGroup)
-            && this.isTheRangesCorrect(correctGroup)
+          this.isOnlyOneCorrectGroup(sortedByType) &&
+          this.checkForTrashOnLeftSide(correctGroup) &&
+          this.checkForTrashOnRightSide(correctGroup) &&
+          this.isTheRangesCorrect(correctGroup)
         ) {
-          this.finalCoordinates = this.transformCoordinatesToDecimalFormat(correctGroup)
-          this.isValid = true
+          this.finalCoordinates = this.transformCoordinatesToDecimalFormat(correctGroup);
+          this.isValid = true;
         } else {
-          this.isValid = false
+          this.isValid = false;
         }
       }
     }
@@ -106,536 +102,526 @@ export class CoordinatesModel implements ICoordinates {
 
   private getCorrectGroup(groups: string[][]): string[] {
     return groups.find((group: string[]) => {
-        this.setCalledRegExpsIndexes(group)
+      this.setCalledRegExpsIndexes(group);
 
-        return this.isEvenQuantityOfCoordinates(group)
-          && this.isInTheRightOrder(group)
-          && this.isSameTypeOfCoordinates()
-      }
-    )
+      return this.isEvenQuantityOfCoordinates(group) && this.isInTheRightOrder(group) && this.isSameTypeOfCoordinates();
+    });
   }
 
   private isOnlyOneCorrectGroup(groups: string[][]): boolean {
     const correctGroups = groups.filter((group: string[]) => {
-        this.setCalledRegExpsIndexes(group)
+      this.setCalledRegExpsIndexes(group);
 
-        return this.isEvenQuantityOfCoordinates(group)
-          && this.isInTheRightOrder(group)
-          && this.isSameTypeOfCoordinates()
-      }
-    )
+      return this.isEvenQuantityOfCoordinates(group) && this.isInTheRightOrder(group) && this.isSameTypeOfCoordinates();
+    });
 
-    return correctGroups.length === 1
+    return correctGroups.length === 1;
   }
 
   private checkForTrashOnLeftSide(correctArr: string[]): boolean {
     if (correctArr) {
-      const [ first ] = correctArr
-      const isEmptyOnLeft: number = this.str.trim().indexOf(first)
+      const [first] = correctArr;
+      const isEmptyOnLeft: number = this.str.trim().indexOf(first);
 
-      return isEmptyOnLeft === 0
+      return isEmptyOnLeft === 0;
     }
   }
 
   private checkForTrashOnRightSide(correctArr: string[]): boolean {
     if (correctArr) {
-      const last: string = correctArr[correctArr.length - 1]
-      const pureStr: string = this.str.trim()
-      const endOfStr: string[] = []
+      const last: string = correctArr[correctArr.length - 1];
+      const pureStr: string = this.str.trim();
+      const endOfStr: string[] = [];
 
       for (let i = 1; i <= last.length; i++) {
-        endOfStr.push(pureStr[pureStr.length - i])
+        endOfStr.push(pureStr[pureStr.length - i]);
       }
 
-      return last === endOfStr.reverse().join('')
+      return last === endOfStr.reverse().join('');
     }
   }
 
   private isEvenQuantityOfCoordinates(parts: string[]): boolean {
-    return parts.length % 2 === 0
+    return parts.length % 2 === 0;
   }
 
   private setCalledRegExpsIndexes(parts: string[]): void {
-    this.calledRegExpsIndexes = []
+    this.calledRegExpsIndexes = [];
 
-    parts.forEach(part => {
+    parts.forEach((part) => {
       this.strictRegExps.forEach((exp, idx) => {
         if (exp.test(part)) {
-          this.calledRegExpsIndexes.push(idx)
+          this.calledRegExpsIndexes.push(idx);
         }
-      })
-    })
+      });
+    });
   }
 
   private isSameTypeOfCoordinates(): boolean {
-    const setOfCalledRegExpsIndexes = new Set(this.calledRegExpsIndexes)
+    const setOfCalledRegExpsIndexes = new Set(this.calledRegExpsIndexes);
 
     if ([...setOfCalledRegExpsIndexes].length === 1) {
-      this.activeType = [...setOfCalledRegExpsIndexes][0]
-      return true
+      this.activeType = [...setOfCalledRegExpsIndexes][0];
+      return true;
     } else {
-      return false
+      return false;
     }
   }
 
   private isIncludeCardinalPoints(parts: string[]): boolean {
-    const cardinalPointsRegExp = /[NSСЮEWЗВ]{1}/
-    return parts.every((part: string) => cardinalPointsRegExp.test(part))
+    const cardinalPointsRegExp = /[NSСЮEWЗВ]{1}/;
+    return parts.every((part: string) => cardinalPointsRegExp.test(part));
   }
 
   private isInTheRightOrder(parts: string[]): boolean {
-    const latitudeCardinalPointsRegExp = /[NSСЮ]{1}/
-    const longitudeCardinalPointsForRegExp = /[EWЗВ]{1}/
-    const odds: string[] = []
-    const evens: string[] = []
+    const latitudeCardinalPointsRegExp = /[NSСЮ]{1}/;
+    const longitudeCardinalPointsForRegExp = /[EWЗВ]{1}/;
+    const odds: string[] = [];
+    const evens: string[] = [];
 
     parts.forEach((part: string, idx: number) => {
-      (idx + 1) % 2 === 0 ? evens.push(part) : odds.push(part)
-    })
+      (idx + 1) % 2 === 0 ? evens.push(part) : odds.push(part);
+    });
 
     if (this.isIncludeCardinalPoints(parts)) {
-      const oddsIsOK
-        = odds.every((part: string) => latitudeCardinalPointsRegExp.test(part))
-      const evensIsOK
-        = evens.every((part: string) => longitudeCardinalPointsForRegExp.test(part))
+      const oddsIsOK = odds.every((part: string) => latitudeCardinalPointsRegExp.test(part));
+      const evensIsOK = evens.every((part: string) => longitudeCardinalPointsForRegExp.test(part));
 
-
-      return oddsIsOK && evensIsOK
+      return oddsIsOK && evensIsOK;
     } else {
-        return true
+      return true;
     }
   }
 
   private isTheRangesCorrect(parts: string[]): boolean {
-    const odds: string[] = []
-    const evens: string[] = []
+    const odds: string[] = [];
+    const evens: string[] = [];
 
     parts.forEach((part: string, idx: number) => {
-      (idx + 1) % 2 === 0 ? evens.push(part) : odds.push(part)
-    })
+      (idx + 1) % 2 === 0 ? evens.push(part) : odds.push(part);
+    });
 
     if (
-      odds.every((part: string) => this.strictRegExps[0].test(part))
-      && evens.every((part: string) => this.strictRegExps[0].test(part))
+      odds.every((part: string) => this.strictRegExps[0].test(part)) &&
+      evens.every((part: string) => this.strictRegExps[0].test(part))
     ) {
-      return this.check0Type(odds, evens)
+      return this.check0Type(odds, evens);
     }
 
     if (
-      odds.every((part: string) => this.strictRegExps[1].test(part))
-      && evens.every((part: string) => this.strictRegExps[1].test(part))
+      odds.every((part: string) => this.strictRegExps[1].test(part)) &&
+      evens.every((part: string) => this.strictRegExps[1].test(part))
     ) {
-      return this.check1Type(odds, evens)
+      return this.check1Type(odds, evens);
     }
 
     if (
-      odds.every((part: string) => this.strictRegExps[2].test(part))
-      && evens.every((part: string) => this.strictRegExps[2].test(part))
+      odds.every((part: string) => this.strictRegExps[2].test(part)) &&
+      evens.every((part: string) => this.strictRegExps[2].test(part))
     ) {
-      return this.check2Type(odds, evens)
+      return this.check2Type(odds, evens);
     }
 
     if (
-      odds.every((part: string) => this.strictRegExps[3].test(part))
-      && evens.every((part: string) => this.strictRegExps[3].test(part))
+      odds.every((part: string) => this.strictRegExps[3].test(part)) &&
+      evens.every((part: string) => this.strictRegExps[3].test(part))
     ) {
-      return this.check3Type(odds, evens)
-    }
-
-
-    if (
-      odds.every((part: string) => this.strictRegExps[4].test(part))
-      && evens.every((part: string) => this.strictRegExps[4].test(part))
-    ) {
-      return this.check4Type(odds, evens)
+      return this.check3Type(odds, evens);
     }
 
     if (
-      odds.every((part: string) => this.strictRegExps[5].test(part))
-      && evens.every((part: string) => this.strictRegExps[5].test(part))
+      odds.every((part: string) => this.strictRegExps[4].test(part)) &&
+      evens.every((part: string) => this.strictRegExps[4].test(part))
     ) {
-      return this.check5Type(odds, evens)
+      return this.check4Type(odds, evens);
     }
 
     if (
-      odds.every((part: string) => this.strictRegExps[6].test(part))
-      && evens.every((part: string) => this.strictRegExps[6].test(part))
+      odds.every((part: string) => this.strictRegExps[5].test(part)) &&
+      evens.every((part: string) => this.strictRegExps[5].test(part))
     ) {
-      return this.check6Type(odds, evens)
+      return this.check5Type(odds, evens);
     }
 
     if (
-      odds.every((part: string) => this.strictRegExps[7].test(part))
-      && evens.every((part: string) => this.strictRegExps[7].test(part))
+      odds.every((part: string) => this.strictRegExps[6].test(part)) &&
+      evens.every((part: string) => this.strictRegExps[6].test(part))
     ) {
-      return this.check7Type(odds, evens)
+      return this.check6Type(odds, evens);
     }
 
     if (
-      odds.every((part: string) => this.strictRegExps[8].test(part))
-      && evens.every((part: string) => this.strictRegExps[8].test(part))
+      odds.every((part: string) => this.strictRegExps[7].test(part)) &&
+      evens.every((part: string) => this.strictRegExps[7].test(part))
     ) {
-      return this.check8Type(odds, evens)
+      return this.check7Type(odds, evens);
+    }
+
+    if (
+      odds.every((part: string) => this.strictRegExps[8].test(part)) &&
+      evens.every((part: string) => this.strictRegExps[8].test(part))
+    ) {
+      return this.check8Type(odds, evens);
     }
   }
 
   private check0Type(odds: string[], evens: string[]): boolean {
     const oddsCorrect: boolean = odds.every((part: string) => {
-      const latitude = Number(part.match(/-{0,1}[0-9]{0,}[^°]/)[0])
-      return latitude <= 90 && latitude >= -90
-    })
+      const latitude = Number(part.match(/-{0,1}[0-9]{0,}[^°]/)[0]);
+      return latitude <= 90 && latitude >= -90;
+    });
 
     const evensCorrect: boolean = evens.every((part: string) => {
-      const longitude = Number(part.match(/-{0,1}[0-9]{0,}[^°]/)[0])
-      return longitude <= 180 && longitude >= -180
-    })
+      const longitude = Number(part.match(/-{0,1}[0-9]{0,}[^°]/)[0]);
+      return longitude <= 180 && longitude >= -180;
+    });
 
-    return oddsCorrect && evensCorrect
+    return oddsCorrect && evensCorrect;
   }
 
   private check1Type(odds: string[], evens: string[]): boolean {
     const oddsCorrect: boolean = odds.every((part: string) => {
-      const values = part.match(/[0-9]{0,}[^NSСЮEWЗВ]/)[0].split('')
+      const values = part.match(/[0-9]{0,}[^NSСЮEWЗВ]/)[0].split('');
 
-      let latitude: number
-      let minutes: number
-      let seconds: number
+      let latitude: number;
+      let minutes: number;
+      let seconds: number;
 
       if (values.length === 6) {
-        latitude = Number(values[0] + values[1])
-        minutes = Number(values[2] + values[3])
-        seconds = Number(values[4] + values[5])
+        latitude = Number(values[0] + values[1]);
+        minutes = Number(values[2] + values[3]);
+        seconds = Number(values[4] + values[5]);
 
-        return latitude <= 89 && latitude >= -89
-          && minutes <= 59 && minutes >= 1
-          && seconds <= 59 && seconds >= 1
+        return latitude <= 89 && latitude >= -89 && minutes <= 59 && minutes >= 1 && seconds <= 59 && seconds >= 1;
       }
 
       if (values.length === 4) {
-        latitude = Number(values[0] + values[1])
-        minutes = Number(values[2] + values[3])
+        latitude = Number(values[0] + values[1]);
+        minutes = Number(values[2] + values[3]);
 
-        return latitude <= 89 && latitude >= -89
-          && minutes <= 59 && minutes >= 1
+        return latitude <= 89 && latitude >= -89 && minutes <= 59 && minutes >= 1;
       }
 
       if (values.length === 2) {
-        latitude = Number(values[0] + values[1])
+        latitude = Number(values[0] + values[1]);
 
-        return latitude <= 90 && latitude >= -90
+        return latitude <= 90 && latitude >= -90;
       }
 
       if (values.length === 1) {
-        latitude = Number(values[0])
+        latitude = Number(values[0]);
 
-        return latitude <= 90 && latitude >= -90
+        return latitude <= 90 && latitude >= -90;
       }
-    })
+    });
 
     const evensCorrect: boolean = evens.every((part: string) => {
-      const values: string[] = part.match(/[0-9]{0,}[^NSСЮEWЗВ]/)[0].split('') // 45N
+      const values: string[] = part.match(/[0-9]{0,}[^NSСЮEWЗВ]/)[0].split(''); // 45N
 
-      let longitude: number
-      let minutes: number
-      let seconds: number
+      let longitude: number;
+      let minutes: number;
+      let seconds: number;
 
       if (values.length === 7) {
-        longitude = Number(values[0] + values[1] + values[2])
-        minutes = Number(values[3] + values[4])
-        seconds = Number(values[5] + values[6])
+        longitude = Number(values[0] + values[1] + values[2]);
+        minutes = Number(values[3] + values[4]);
+        seconds = Number(values[5] + values[6]);
 
-        return longitude <= 179 && longitude >= -179
-          && minutes <= 59 && minutes >= 1
-          && seconds <= 59 && seconds >= 1
+        return longitude <= 179 && longitude >= -179 && minutes <= 59 && minutes >= 1 && seconds <= 59 && seconds >= 1;
       }
 
       if (values.length === 6) {
-        longitude = Number(values[0] + values[1])
-        minutes = Number(values[2] + values[3])
-        seconds = Number(values[4] + values[5])
+        longitude = Number(values[0] + values[1]);
+        minutes = Number(values[2] + values[3]);
+        seconds = Number(values[4] + values[5]);
 
-        return longitude <= 179 && longitude >= -179
-          && minutes <= 59 && minutes >= 1
-          && seconds <= 59 && seconds >= 1
+        return longitude <= 179 && longitude >= -179 && minutes <= 59 && minutes >= 1 && seconds <= 59 && seconds >= 1;
       }
 
       if (values.length === 4) {
-        longitude = Number(values[0] + values[1])
-        minutes = Number(values[2] + values[3])
+        longitude = Number(values[0] + values[1]);
+        minutes = Number(values[2] + values[3]);
 
-        return longitude <= 179 && longitude >= -179
-          && minutes <= 59 && minutes >= 1
+        return longitude <= 179 && longitude >= -179 && minutes <= 59 && minutes >= 1;
       }
 
       if (values.length === 3) {
-        longitude = Number(values[0] + values[1] + values[2])
+        longitude = Number(values[0] + values[1] + values[2]);
 
-        return longitude <= 179 && longitude >= -179
+        return longitude <= 179 && longitude >= -179;
       }
 
       if (values.length === 2) {
-        longitude = Number(values[0] + values[1])
+        longitude = Number(values[0] + values[1]);
 
-        return longitude <= 179 && longitude >= -179
+        return longitude <= 179 && longitude >= -179;
       }
 
       if (values.length === 1) {
-        longitude = Number(values[0])
+        longitude = Number(values[0]);
 
-        return longitude <= 179 && longitude >= -179
+        return longitude <= 179 && longitude >= -179;
       }
-    })
+    });
 
-    return oddsCorrect && evensCorrect
+    return oddsCorrect && evensCorrect;
   }
 
   private check2Type(odds: string[], evens: string[]): boolean {
     const oddsCorrect: boolean = odds.every((part: string) => {
-      const latitude = Number(part.match(/[^NSСЮEWЗВ][0-9]{0,}[^°]/)[0])
-      return latitude <= 90 && latitude >= -90
-    })
+      const latitude = Number(part.match(/[^NSСЮEWЗВ][0-9]{0,}[^°]/)[0]);
+      return latitude <= 90 && latitude >= -90;
+    });
 
     const evensCorrect: boolean = evens.every((part: string) => {
-      const longitude = Number(part.match(/[^NSСЮEWЗВ][0-9]{0,}[^°]/)[0])
-      return longitude <= 180 && longitude >= -180
-    })
+      const longitude = Number(part.match(/[^NSСЮEWЗВ][0-9]{0,}[^°]/)[0]);
+      return longitude <= 180 && longitude >= -180;
+    });
 
-    return oddsCorrect && evensCorrect
+    return oddsCorrect && evensCorrect;
   }
 
   private check3Type(odds: string[], evens: string[]): boolean {
     const oddsCorrect: boolean = odds.every((part: string) => {
-      const latitude = Number(part.match(/[0-9]{0,}[^°NSСЮEWЗВ]/)[0])
-      return latitude <= 90 && latitude >= -90
-    })
+      const latitude = Number(part.match(/[0-9]{0,}[^°NSСЮEWЗВ]/)[0]);
+      return latitude <= 90 && latitude >= -90;
+    });
 
     const evensCorrect: boolean = evens.every((part: string) => {
-      const longitude = Number(part.match(/[0-9]{0,}[^°NSСЮEWЗВ]/)[0])
-      return longitude <= 180 && longitude >= -180
-    })
+      const longitude = Number(part.match(/[0-9]{0,}[^°NSСЮEWЗВ]/)[0]);
+      return longitude <= 180 && longitude >= -180;
+    });
 
-    return oddsCorrect && evensCorrect
+    return oddsCorrect && evensCorrect;
   }
 
   private check4Type(odds: string[], evens: string[]): boolean {
     const oddsCorrect: boolean = odds.every((part: string) => {
-      const [latitude, minutes] = part.match(/[0-9]{1,}/g)
-      return +latitude <= 89 && +latitude >= -89 && +minutes <= 59 && +minutes >= 1
-    })
+      const [latitude, minutes] = part.match(/[0-9]{1,}/g);
+      return +latitude <= 89 && +latitude >= -89 && +minutes <= 59 && +minutes >= 1;
+    });
 
     const evensCorrect: boolean = evens.every((part: string) => {
-      const [longitude, minutes] = part.match(/[0-9]{1,}/g)
-      return +longitude <= 179 && +longitude >= -179 && +minutes <= 59 && +minutes >= 1
-    })
+      const [longitude, minutes] = part.match(/[0-9]{1,}/g);
+      return +longitude <= 179 && +longitude >= -179 && +minutes <= 59 && +minutes >= 1;
+    });
 
-    return oddsCorrect && evensCorrect
+    return oddsCorrect && evensCorrect;
   }
 
   private check5Type(odds: string[], evens: string[]): boolean {
     const oddsCorrect: boolean = odds.every((part: string) => {
-      const [latitude, decimal] = part.match(/-{0,1}[0-9]{1,}/g)
-      return +latitude <= 89 && +latitude >= -89 && +decimal <= 999999 && +decimal >= 1
-    })
+      const [latitude, decimal] = part.match(/-{0,1}[0-9]{1,}/g);
+      return +latitude <= 89 && +latitude >= -89 && +decimal <= 999999 && +decimal >= 1;
+    });
 
     const evensCorrect: boolean = evens.every((part: string) => {
-      const [longitude, decimal] = part.match(/-{0,1}[0-9]{1,}/g)
-      return +longitude <= 179 && +longitude >= -179 && +decimal <= 999999 && +decimal >= 1
-    })
+      const [longitude, decimal] = part.match(/-{0,1}[0-9]{1,}/g);
+      return +longitude <= 179 && +longitude >= -179 && +decimal <= 999999 && +decimal >= 1;
+    });
 
-    return oddsCorrect && evensCorrect
+    return oddsCorrect && evensCorrect;
   }
 
   private check6Type(odds: string[], evens: string[]): boolean {
     const oddsCorrect: boolean = odds.every((part: string) => {
-      const [latitude, minutes, seconds] = part.match(/[0-9]{1,}/g)
-      return +latitude <= 89 && +latitude >= -89
-        && +minutes <= 59 && +minutes >= 1
-        && +seconds <= 59 && +seconds >= 1
-    })
+      const [latitude, minutes, seconds] = part.match(/[0-9]{1,}/g);
+      return +latitude <= 89 && +latitude >= -89 && +minutes <= 59 && +minutes >= 1 && +seconds <= 59 && +seconds >= 1;
+    });
 
     const evensCorrect: boolean = evens.every((part: string) => {
-      const [longitude, minutes, seconds] = part.match(/[0-9]{1,}/g)
-      return +longitude <= 179 && +longitude >= -179
-        && +minutes <= 59 && +minutes >= 1
-        && +seconds <= 59 && +seconds >= 1
-    })
+      const [longitude, minutes, seconds] = part.match(/[0-9]{1,}/g);
+      return (
+        +longitude <= 179 && +longitude >= -179 && +minutes <= 59 && +minutes >= 1 && +seconds <= 59 && +seconds >= 1
+      );
+    });
 
-    return oddsCorrect && evensCorrect
+    return oddsCorrect && evensCorrect;
   }
 
   private check7Type(odds: string[], evens: string[]): boolean {
     const oddsCorrect: boolean = odds.every((part: string) => {
-      const [latitude, decimal] = part.match(/[0-9]{1,}/g)
-      return +latitude <= 89 && +latitude >= -89 && +decimal <= 999999 && +decimal >= 1
-    })
+      const [latitude, decimal] = part.match(/[0-9]{1,}/g);
+      return +latitude <= 89 && +latitude >= -89 && +decimal <= 999999 && +decimal >= 1;
+    });
 
     const evensCorrect: boolean = evens.every((part: string) => {
-      const [longitude, decimal] = part.match(/[0-9]{1,}/g)
-      return +longitude <= 179 && +longitude >= -179 && +decimal <= 999999 && +decimal >= 1
-    })
+      const [longitude, decimal] = part.match(/[0-9]{1,}/g);
+      return +longitude <= 179 && +longitude >= -179 && +decimal <= 999999 && +decimal >= 1;
+    });
 
-    return oddsCorrect && evensCorrect
+    return oddsCorrect && evensCorrect;
   }
 
   private check8Type(odds: string[], evens: string[]): boolean {
     const oddsCorrect: boolean = odds.every((part: string) => {
-      const [latitude, minutes, seconds, milliseconds] = part.match(/[0-9]{1,}/g)
-      return +latitude <= 89 && +latitude >= -89
-        && +minutes <= 59 && +minutes >= 1
-        && +seconds <= 59 && +seconds >= 1
-        && +milliseconds <= 9999 && +milliseconds >= 1
-    })
+      const [latitude, minutes, seconds, milliseconds] = part.match(/[0-9]{1,}/g);
+      return (
+        +latitude <= 89 &&
+        +latitude >= -89 &&
+        +minutes <= 59 &&
+        +minutes >= 1 &&
+        +seconds <= 59 &&
+        +seconds >= 1 &&
+        +milliseconds <= 9999 &&
+        +milliseconds >= 1
+      );
+    });
 
     const evensCorrect: boolean = evens.every((part: string) => {
-      const [longitude, minutes, seconds, milliseconds] = part.match(/[0-9]{1,}/g)
-      return +longitude <= 179 && +longitude >= -179
-        && +minutes <= 59 && +minutes >= 1
-        && +seconds <= 59 && +seconds >= 1
-        && +milliseconds <= 9999 && +milliseconds >= 1
-    })
+      const [longitude, minutes, seconds, milliseconds] = part.match(/[0-9]{1,}/g);
+      return (
+        +longitude <= 179 &&
+        +longitude >= -179 &&
+        +minutes <= 59 &&
+        +minutes >= 1 &&
+        +seconds <= 59 &&
+        +seconds >= 1 &&
+        +milliseconds <= 9999 &&
+        +milliseconds >= 1
+      );
+    });
 
-    return oddsCorrect && evensCorrect
+    return oddsCorrect && evensCorrect;
   }
 
   private transformCoordinatesToDecimalFormat(coordinates: string[]): number[][] {
-    const subResult: number[] = []
-    const pairs: number[][] = []
+    const subResult: number[] = [];
+    const pairs: number[][] = [];
 
     switch (this.activeType) {
       case 0:
         coordinates.forEach((part: string) => {
-          const transformedPart: string = part.match(/-{0,1}[0-9]{1,}/)[0]
-          subResult.push(+transformedPart)
-        })
-        break
+          const transformedPart: string = part.match(/-{0,1}[0-9]{1,}/)[0];
+          subResult.push(+transformedPart);
+        });
+        break;
 
       case 1:
         coordinates.forEach((part: string) => {
-          const values: string[] = part.match(/[0-9]{1,}/)[0].split('')
+          const values: string[] = part.match(/[0-9]{1,}/)[0].split('');
 
-          let degrees: number
-          let minutes: number
-          let seconds: number
-          let transformedPart: number
+          let degrees: number;
+          let minutes: number;
+          let seconds: number;
+          let transformedPart: number;
 
           switch (values.length) {
             case 7:
-              degrees = Number(values[0] + values[1] + values[2])
-              minutes = Number(values[3] + values[4])
-              seconds = Number(values[5] + values[6])
-              transformedPart = Number(degrees) + Number(minutes) / 60 + Number(seconds) / 3600
-              break
+              degrees = Number(values[0] + values[1] + values[2]);
+              minutes = Number(values[3] + values[4]);
+              seconds = Number(values[5] + values[6]);
+              transformedPart = Number(degrees) + Number(minutes) / 60 + Number(seconds) / 3600;
+              break;
             case 6:
-              degrees = Number(values[0] + values[1])
-              minutes = Number(values[2] + values[3])
-              seconds = Number(values[4] + values[5])
-              transformedPart = Number(degrees) + Number(minutes) / 60 + Number(seconds) / 3600
-              break
+              degrees = Number(values[0] + values[1]);
+              minutes = Number(values[2] + values[3]);
+              seconds = Number(values[4] + values[5]);
+              transformedPart = Number(degrees) + Number(minutes) / 60 + Number(seconds) / 3600;
+              break;
             case 4:
-              degrees = Number(values[0] + values[1])
-              minutes = Number(values[2] + values[3])
-              transformedPart = Number(degrees) + Number(minutes) / 60
-              break
+              degrees = Number(values[0] + values[1]);
+              minutes = Number(values[2] + values[3]);
+              transformedPart = Number(degrees) + Number(minutes) / 60;
+              break;
             case 3:
-              degrees = Number(values[0] + values[1] + values[2])
-              transformedPart = Number(degrees)
-              break
+              degrees = Number(values[0] + values[1] + values[2]);
+              transformedPart = Number(degrees);
+              break;
             case 2:
-              degrees = Number(values[0] + values[1])
-              transformedPart = Number(degrees)
-              break
+              degrees = Number(values[0] + values[1]);
+              transformedPart = Number(degrees);
+              break;
             case 1:
-              degrees = Number(values[0])
-              transformedPart = Number(degrees)
-              break
+              degrees = Number(values[0]);
+              transformedPart = Number(degrees);
+              break;
           }
 
           if (/[SЮWЗ]/.test(part)) {
-            transformedPart = Number(`-${transformedPart}`)
+            transformedPart = Number(`-${transformedPart}`);
           }
 
-          subResult.push(+transformedPart.toFixed(6))
-        })
-        break
+          subResult.push(+transformedPart.toFixed(6));
+        });
+        break;
 
       case 2:
       case 3:
         coordinates.forEach((part: string) => {
-          let transformedPart: string = part.match(/[0-9]{1,}/)[0]
+          let transformedPart: string = part.match(/[0-9]{1,}/)[0];
 
           if (/[SЮWЗ]/.test(part)) {
-            transformedPart = '-' + transformedPart
+            transformedPart = '-' + transformedPart;
           }
 
-          subResult.push(+transformedPart)
-        })
-        break
+          subResult.push(+transformedPart);
+        });
+        break;
 
       case 4:
         coordinates.forEach((part: string) => {
-          const [degrees, minutes] = part.match(/[0-9]{1,}/g)
-          let transformedPart: number = Number(degrees) + Number(minutes) / 60
+          const [degrees, minutes] = part.match(/[0-9]{1,}/g);
+          let transformedPart: number = Number(degrees) + Number(minutes) / 60;
 
           if (/[SЮWЗ]/.test(part)) {
-            transformedPart = Number(`-${transformedPart}`)
+            transformedPart = Number(`-${transformedPart}`);
           }
 
-          subResult.push(+transformedPart.toFixed(6))
-        })
-        break
+          subResult.push(+transformedPart.toFixed(6));
+        });
+        break;
 
       case 5:
       case 7:
         coordinates.forEach((part: string) => {
-          let transformedPart: string = part.match(/-{0,1}[0-9]{1,3}[,|.][0-9]{1,10}/)[0]
+          let transformedPart: string = part.match(/-{0,1}[0-9]{1,3}[,|.][0-9]{1,10}/)[0];
 
           if (/[SЮWЗ]/.test(part)) {
-            transformedPart = `-${transformedPart}`
+            transformedPart = `-${transformedPart}`;
           }
 
           if (transformedPart.includes('.')) {
-            subResult.push(+transformedPart)
+            subResult.push(+transformedPart);
           } else {
-            const [number, decimal] = transformedPart.split(',')
-            subResult.push(+`${number}.${decimal}`)
+            const [number, decimal] = transformedPart.split(',');
+            subResult.push(+`${number}.${decimal}`);
           }
-        })
-        break
+        });
+        break;
 
       case 6:
         coordinates.forEach((part: string) => {
-          const [degrees, minutes, seconds] = part.match(/[0-9]{1,}/g)
-          let transformedPart: number = Number(degrees) + Number(minutes) / 60 + Number(seconds) / 3600
+          const [degrees, minutes, seconds] = part.match(/[0-9]{1,}/g);
+          let transformedPart: number = Number(degrees) + Number(minutes) / 60 + Number(seconds) / 3600;
 
           if (/[SЮWЗ]/.test(part)) {
-            transformedPart = Number(`-${transformedPart}`)
+            transformedPart = Number(`-${transformedPart}`);
           }
 
-          subResult.push(+transformedPart.toFixed(6))
-        })
-        break
+          subResult.push(+transformedPart.toFixed(6));
+        });
+        break;
 
       case 8:
         coordinates.forEach((part: string) => {
-          const [degrees, minutes, seconds, milliseconds] = part.match(/[0-9]{1,}/g)
-          let transformedPart: number = Number(degrees) + Number(minutes) / 60 + Number(seconds) / 3600 + Number(milliseconds) / 3600000
+          const [degrees, minutes, seconds, milliseconds] = part.match(/[0-9]{1,}/g);
+          let transformedPart: number =
+            Number(degrees) + Number(minutes) / 60 + Number(seconds) / 3600 + Number(milliseconds) / 3600000;
 
           if (/[SЮWЗ]/.test(part)) {
-            transformedPart = Number(`-${transformedPart}`)
+            transformedPart = Number(`-${transformedPart}`);
           }
 
-          subResult.push(+transformedPart.toFixed(6))
-        })
-        break
+          subResult.push(+transformedPart.toFixed(6));
+        });
+        break;
     }
 
     for (let i = 0; i < subResult.length; i += 2) {
-      pairs.push([subResult[i], subResult[i + 1]])
+      pairs.push([subResult[i], subResult[i + 1]]);
     }
 
-    return pairs
+    return pairs;
   }
 }
-
-
-

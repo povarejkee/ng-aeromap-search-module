@@ -1,4 +1,4 @@
 export interface ILocalization {
-  en: any
-  ru: any
+  en: any;
+  ru: any;
 }

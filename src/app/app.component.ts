@@ -1,20 +1,21 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 
-import { TranslateService } from "@ngx-translate/core";
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrls: ['./app.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppComponent implements OnInit {
   constructor(private TranslateService: TranslateService) {}
 
   ngOnInit(): void {
-    this.TranslateService.setDefaultLang('ru')
+    this.TranslateService.setDefaultLang('ru');
   }
 
   switchLanguage(lang: 'ru' | 'en'): void {
-    this.TranslateService.setDefaultLang(lang)
+    this.TranslateService.setDefaultLang(lang);
   }
 }

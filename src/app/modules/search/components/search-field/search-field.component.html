@@ -5,15 +5,15 @@
       class="als-text-black"
       matInput
       #inputSearch
-      [(ngModel)] = "value"
-      (keyup.enter) = "onEnterPressHandler($event)"
-    >
-    <div *ngIf = "isLoading" class="search__header-field-loader">
-      <mat-spinner [diameter] = "21"></mat-spinner>
+      [(ngModel)]="value"
+      (keyup.enter)="onEnterPressHandler($event)"
+    />
+    <div *ngIf="isLoading" class="search__header-field-loader">
+      <mat-spinner [diameter]="21"></mat-spinner>
     </div>
     <mat-icon
-      *ngIf = "inputSearch.value.trim()"
-      (click) = "reset()"
+      *ngIf="inputSearch.value.trim()"
+      (click)="reset()"
       matSuffix
       class="search__header-field-reset als-text-light-grey"
     >

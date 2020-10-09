@@ -1,6 +1,6 @@
-import { Observable, of } from "rxjs";
+import { Observable, of } from 'rxjs';
 
-import { TranslateLoader } from "@ngx-translate/core";
+import { TranslateLoader } from '@ngx-translate/core';
 
 const RU = {
   Search: {
@@ -10,9 +10,9 @@ const RU = {
     RestrictedAreas: 'Зоны',
     Highways: 'Трассы',
     Locations: 'Локации',
-    NotFound: 'По вашему запросу ничего не найдено'
-  }
-}
+    NotFound: 'По вашему запросу ничего не найдено',
+  },
+};
 
 const EN = {
   Search: {
@@ -22,9 +22,9 @@ const EN = {
     RestrictedAreas: 'Restricted Areas',
     Highways: 'Highways',
     Locations: 'Locations',
-    NotFound: 'No results were found'
-  }
-}
+    NotFound: 'No results were found',
+  },
+};
 
 export class MapTranslateLoader implements TranslateLoader {
   getTranslation(lang: string): Observable<any> {
